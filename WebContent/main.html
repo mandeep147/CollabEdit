@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+
+<head>
+<title>main.jsp Loaded</title>
+	<script
+		src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+</head>
+<link rel="stylesheet"
+	href="../CollabEdit/CodeMirror/lib/codemirror.css">
+<link rel="stylesheet" href="../CollabEdit/CodeMirror/theme/mbo.css">
+<style type="text/css">
+ {
+	padding: 0px;
+	margin: 0px;
+}
+
+.selectedWidget {
+	border: 2px solid blue;
+}
+
+html,body {
+	height: 100%;
+	font-family: 'Segoe UI';
+}
+
+.cm-s-mbo {
+	font-family: 'Menlo', 'Consolas', monospace !important;
+	font-weight: bold;
+	font-size: 15px;
+	width: 80% !important;
+	height: 718px !important;
+	height: 200%;
+}
+
+#save {
+	position: fixed;
+	width: 19%; top : 0px;
+	right: 0;
+	border-left: 1px solid white;
+	padding: 10px;
+	
+}
+
+#saveButton,#logoutButton {
+	border: 0px solid white;
+	background-color: rgb(86,164,246);
+	color: white;
+	cursor: pointer;
+	padding: 5px 10px;
+	margin-bottom:3px;
+}
+#saveButton
+{
+	margin-right: 40px;
+}
+
+#usersOnline {
+	z-index: -3;
+	position: fixed;
+	top:40px;
+	right: 0;
+	border-left: 1px solid white;
+	width: 20%;
+	height: 100%;
+	overflow-y: scroll;
+	background-color: rgba(86, 164, 246, 0.5);
+	color: black;
+}
+
+.online {
+	vertical-align: middle;
+}
+
+.greenDot {
+	margin-right: 5px;
+	width: 32px;
+	height: 32px;
+}
+#logoutButton
+{
+	float: right;
+}
+.errorData
+{
+	text-align: center;
+}
+.goBack
+{
+	font-size: 20px;
+	border: 0px solid black;
+	cursor: pointer;
+	background-color: white;
+	color: rgb(86,164,246);
+	margin: 0 auto;
+	display: block;
+	border-radius: 3px;
+	padding: 4px;
+}
+</style>
+<body style="height: 107px;">
+
+	<script src="../CollabEdit/scripts/DisplayShared.js"></script>
+	<script src="../CollabEdit/CodeMirror/lib/codemirror.js"></script>
+	<script src="../CollabEdit/CodeMirror/mode/javascript/javascript.js"></script>
+	<script src="../CollabEdit/dojo/dojo.js" data-dojo-config="async:true"></script>
+
+	<form>
+		<textarea id='myTextArea'>
+        	//Enter your code here
+    	</textarea>
+
+		<div id='store' myattr=''></div>
+
+		<div id='right'>
+			<div id='save'>
+				<button id='saveButton' onClick="saveChanges()">Save Changes</button>
+				<input type='button' value='Logout' id='logoutButton'>
+			</div>
+			<div id='usersOnline'></div>
+		</div>
+	</form>
+		<div class="noticeForOldData">
+		<div class="divForBlueColor">
+			<div class="noticeText">
+			</div>
+		</div>
+	</div>
+	
+	<script>
+	
+		var cm = CodeMirror.fromTextArea(myTextArea, {
+			lineNumbers : true,
+			theme : "mbo",
+			autoCloseBrackets : true,
+			keymap : 'sublime',
+			foldGutter : true,
+			gutters : [ "CodeMirror-linenumbers", "CodeMirror-foldgutter" ]
+		});
+	</script>
+	<script src="../CollabEdit/scripts/main.js"></script>
+
+</body>
+
+</html>
+

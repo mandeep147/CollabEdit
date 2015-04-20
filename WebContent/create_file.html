@@ -1,0 +1,230 @@
+
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="css/create_file.css">
+</head>
+<body>
+	<div id="top"></div>
+	<div id="rest">
+		<div  id="form">
+			<form autocomplete="on" method = "post">
+				<button id="loadCreateFile">Create New File
+			
+				</button>
+				<button id="editOldFiles">Edit Old Files
+				</button>
+
+
+				<div id="oldFiles">
+					<div class="listOfFiles">List of old files</div>
+					<ul id='oldFilesList'>
+					</ul>	
+				</div>	
+
+
+				<div id='createFileOuterDiv'>
+					<div id="create_file">Please add details for new File</div>
+					<input id="file" name="nameoffile"  type="text" required placeholder="Name of File" >
+					<br>
+					<select required name='select1' id='sel1'>
+						<option selected value='NULL'>select the extension type</option>
+						<option value='1'>.c</option>
+						<option value='2'>.cpp</option>
+						<option value='3'>.java</option>
+						<option value='4'>.js</option>
+						<option value='5'>.html</option>
+						<option value='6'>.jsp</option>
+	
+						<option value='7'>.css</option>
+						<option value='8'>.rb</option>
+						<option value='9'>.vb</option>
+						<option value='10'>.asp</option>
+						<option value='11'>.pl</option>
+						<option value='12'>.php</option>
+						<option name=other value='other'>others</option>
+					</select>
+					<p>
+						<input id="mail_mod" name="mailofmod" type="email" required placeholder="Share With (gmail ID only)" />
+						<input id="add_new" type="button" value="Create File" onClick = "clickFunction()">
+					</p>
+				</form>
+			</div>
+	</div>
+	
+	<div class="noticeForOldData">
+		<div class="divForBlueColor">
+			<div class="noticeText">
+
+			</div>
+		</div>
+	</div>
+</div>
+	
+</body>
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
+
+	$('#loadCreateFile').click(function(event) 
+	{
+		if($('#oldFiles').is(":visible"))
+			$('#oldFiles').slideToggle(100);
+		setTimeout(function()
+		{	
+			$('#createFileOuterDiv').slideDown(500);
+		},200);
+	});
+
+	$('#editOldFiles').click(function(event) 
+	{
+		if($('#createFileOuterDiv').is(":visible"))
+			$('#createFileOuterDiv').slideToggle(100);
+		setTimeout(function()
+		{	
+			$('#oldFiles').slideDown(500);
+		},200);
+	});
+
+
+
+	$.ajax({
+		url: '/CollabEdit/getPrevData',
+		type: 'POST',
+	})
+	.done(function(data,status) {
+		
+		var fileNames=[],index=0;
+		for(var i in data)
+		{
+			
+			fileNames[index++]= data[i].substring(0,data[i].length-36);
+			console.log("Data:    ",fileNames[index-1]);
+			$('#oldFilesList').append("<li onclick=executeFunction('"+fileNames[index-1]+"') class='filename' id = '"+fileNames[index-1]+"'> <a href='main.html'>" +fileNames[index-1]+" </a></li><br>");
+		}
+
+
+	});
+
+	function executeFunction(i){
+		alert(i);
+		$.ajax({
+			url: '/CollabEdit/SetCurrFile',
+			type: 'POST',
+			data: {fileName: i}
+		})
+		.done(function(data,status) {
+			console.log("Session FILENAME set");
+		});
+
+	}
+	
+
+</script>
+
+<script type="text/javascript">
+	function clickFunction()
+	{
+		
+		var option = document.getElementById("sel1").value;
+
+		var mail_mod = document.getElementById('mail_mod').value;
+		var file = document.getElementById('file').value;
+		var regEx = /@gmail\.com/;
+ 
+		if(option=='NULL')
+		{
+			$('.noticeText').html("");
+			$('.noticeText').append("<div class='errorData'>Select Extension</div>");
+			$('.noticeText').append("<br><input type='button' value='Go back' class='goBack'>");
+			$('.noticeForOldData').slideToggle(500);
+			$('.goBack').click(function(event)
+			{
+				$('.noticeForOldData').slideToggle(500);
+			});
+			
+		}
+		else if(file=='null'||file==undefined)
+		{
+			$('.noticeText').html("");
+			$('.noticeText').append("<div class='errorData'>Set your filename</div>");
+			$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+			$('.noticeForOldData').slideToggle(500);
+			$('.goBack').click(function(event)
+			{
+				$('.noticeForOldData').slideToggle(500);
+			});
+	
+			//error display set filename	
+		}
+		else if(mail_mod.match(regEx)){
+		$.ajax({
+					method : "POST",
+					url : "/CollabEdit/Collaborate",
+					data : {
+						nameoffile 	: document.getElementById('file').value,
+						select1 	: document.getElementById("sel1").value,
+				  		mailofmod 	: document.getElementById('mail_mod').value
+					},
+					success : function(data)
+					{
+						
+					},
+					error : function(data)
+					{
+						$('.noticeText').html("");
+						$('.noticeText').append("<div class='errorData'>Can not Connect to Server, Try again</div>");
+						$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+						$('.noticeForOldData').slideToggle(500);
+						$('.goBack').click(function(event)
+						{
+							$('.noticeForOldData').slideToggle(500);
+						});
+						
+
+					}
+				}).done(function(data, status) {
+						if (data['response'] == 'success') 
+						{	
+							window.location.assign("main.html");
+						} 
+						else 
+						{
+							$('.noticeText').html("");
+							$('.noticeText').append("<div class='errorData'>File with the same name, already Exists</div>");
+							$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+							$('.noticeForOldData').slideToggle(500);
+							$('.goBack').click(function(event)
+							{
+								$('.noticeForOldData').slideToggle(500);
+							});			
+						}
+			});
+		}
+		else	
+		{
+			$('.noticeText').html("");
+			$('.noticeText').append("<div class='errorData'>Enter your gmail id</div>");
+			$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+			$('.noticeForOldData').slideToggle(500);
+			$('.goBack').click(function(event)
+			{
+				$('.noticeForOldData').slideToggle(500);
+			});
+	
+			//email id not gmail
+		}
+	}
+
+</script>
+
+
+
+<!-- <script type="text/javascript">
+
+	$('select').change(function(){
+		if($('#sel1').val()=='other'){
+			var divSubmit = document.createElement('div');
+			$('.file_extension').append('<textfield rows="1" cols="10" placeholder="specify extension type" name="extensiontype"></textfield>');
+		}
+	});
+</script> -->

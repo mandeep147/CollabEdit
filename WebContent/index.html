@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		Welcome User
+	</title>
+	<link rel="stylesheet" type="text/css" href="css/index.css">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</head>
+<body>
+	<div class='main'>
+		<div class='mainLogin'>
+			<div class='loginText'>LOG IN</div>
+			<hr>
+			<label class='usernameLabel label'> Your Email</label>
+			<input type="text" required="required" id = 'username' class="inputs username" placeholder="eg. abc@gmail.com">
+			<label class='passwordLabel label'> Your Password</label>
+			<input type="password" required="required" id = 'password' class="inputs password" placeholder="eg. X8df!90EO">
+			<input type="checkbox"> <span class="keepMeLoggedIn">Keep me logged in</span>
+			<br>
+			<input type="button" value="Login" class='login' onClick = "validateLogin()">
+			<br><br><br>
+			<div class='join'>
+				<span class='toggleText'>Not a member ?</span>
+				<input type='button' value='Join us'class='joinUs toggle'>
+			</div>
+		</div>
+		<div class='mainSignup'>
+			<div class='loginText'>SIGN UP</div>
+			<hr>
+			<label class='usernameLabel label' > Your Username</label>
+			<input type="text" class="username inputs" id = 'usernamesignup' required placeholder="UserName">
+			<label class='emailLabel label'> Your Email</label>
+			<input type="email" class="email inputs" id = 'emailsignup' required placeholder="abcd@gmail.com">
+			<label class='passwordLabel label'> Password </label>
+			<input type="password" class="password inputs" id = 'passwordsignup' required placeholder="eg. X8df!90EO">
+			<label class='confirmPasswordLabel label'> Confirm Password</label>
+			<input type="password" class="confPassword inputs" required id = 'passwordsignup_confirm' placeholder="eg. X8df!90EO">
+			<br>
+			<input type="button" value="Signup" class='signup' onClick = "validateSignUp()">
+			<br><br><br>
+			<div class='join'>
+				<span class='toggleText'>Already a member ?</span>
+				<input type='button' value='Login'class='loginBack toggle'>
+			</div>
+		</div>
+	</div>
+	<div class="noticeForOldData">
+		<div class="divForBlueColor">
+			<div class="noticeText">
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+	<script type="text/javascript">
+		function validateLogin() {
+			var user = document.getElementById('username').value;
+
+			var regEx = /@gmail\.com/;
+			//	alert("username: "+user);
+			if (user.match(regEx)) 
+			{
+				console.log("sending Ajax now");
+				$.ajax({
+					method : "POST",
+					url : "/CollabEdit/Login",
+					data : {
+						username : user,
+						password : document.getElementById('password').value
+					}
+				}).done(function(data, status) {
+			
+					if (data['response'] == 'success') {	
+						window.location.assign("create_file.html");
+					} else {
+								$('.noticeText').html("");
+								$('.noticeText').append("<div class='errorData'>No data FOUND</div>");
+								$('.noticeText').append("<br><input type='button' value='Go back' class='goBack'>");
+								$('.noticeForOldData').slideToggle(500);
+								$('.goBack').click(function(event)
+								{
+									$('.noticeForOldData').slideToggle(500);
+								});
+						}
+				});
+
+			} else {
+				$('.noticeText').html("");
+				$('.noticeText').append("<div class='errorData'>Password is not as per the level</div>");
+				$('.noticeText').append("<br><input type='button' value='Go back' class='goBack'>");
+				$('.noticeForOldData').slideToggle(500);
+				$('.goBack').click(function(event)
+				{
+					$('.noticeForOldData').slideToggle(500);
+				});
+			}
+		}
+</script>
+
+
+	<script type="text/javascript">
+		function validateSignUp() {
+			var regEx = /@gmail\.com/;
+			var userID = document.getElementById("emailsignup").value;//usernamesignup
+			var p1 = document.getElementById("passwordsignup").value;
+			var p2 = document.getElementById("passwordsignup_confirm").value;
+			if ((userID.match(regEx)) && (p1 == p2)) {
+				$
+						.ajax(
+								{
+									method : "POST",
+									url : "/CollabEdit/Registration",
+									data : {
+										usernamesignup : document
+												.getElementById("usernamesignup").value,
+										emailsignup : userID,
+										passwordsignup : document
+												.getElementById("passwordsignup").value
+									}
+								}).done(function(data, status) {
+							console.log("typeof: " + (typeof data));
+							if (data['response'] == 'success') {
+								window.location.assign("index.html");
+							} else {
+
+								$('.noticeText').html("");
+								$('.noticeText').append("<div class='errorData'>Password is not as per the level</div>");
+								$('.noticeText').append("<br><input type='button' value='Go back' class='goBack'>");
+								$('.noticeForOldData').slideToggle(500);
+								$('.goBack').click(function(event)
+								{
+									$('.noticeForOldData').slideToggle(500);
+								});
+							}
+						});
+
+			} else {
+						
+				$('.noticeText').html("");
+				$('.noticeText').append("<div class='errorData'>Either Email id exists in the database or Password is not as per the level</div>");
+				$('.noticeText').append("<br><input type='button' value='Go back' class='goBack'>");
+				$('.noticeForOldData').slideToggle(500);
+				$('.goBack').click(function(event)
+				{
+					$('.noticeForOldData').slideToggle(500);
+				});
+
+			}
+		}
+	</script>
+<script type="text/javascript">
+ 	$('.joinUs').click(function(event)
+	{
+		$('.mainLogin').slideUp(500);
+		$('.mainSignup').slideDown(500);
+	});
+	$('.loginBack').click(function(event)
+	{
+		$('.mainSignup').slideUp(500);
+		$('.mainLogin').slideDown(500);
+	});
+</script>
