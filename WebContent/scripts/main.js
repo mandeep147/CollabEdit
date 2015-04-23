@@ -40,8 +40,8 @@ $.ajax({
 	//			alert("in the IF condition: adding this: "+data['data']);
 				cm.setValue(data['data']);
 			}
-			else
-				alert("FAILS IF condition: adding this: "+data['data']+ "full json: "+data);
+		/*	else
+				alert("FAILS IF condition: adding this: "+data['data']+ "full json: "+data);*/
 	});
 
 
@@ -72,11 +72,11 @@ $.ajax({
     url : "/CollabEdit/DisplaySEmails",
     data: {"url": link2},
     success : function(data) {
-    	alert("data to DSE sent success");
+    	//alert("data to DSE sent success");
         console.log("data sent successfully: ",data);
     },
     error : function(data) {
-    	alert("NOOOOOOOOOOOOOOO data to DSE sent success");
+    	//alert("NOOOOOOOOOOOOOOO data to DSE sent success");
         console.log("Unsuccessful transmission in MAIN.JS-----------------" + data);
     }}).done(
         function(data) {
@@ -90,13 +90,7 @@ $.ajax({
     });
 function saveChanges()
 {
-	alert("in Save Changes");
 	
-	$('.noticeText').html("");
-	$('.noticeText').append("<div class='errorData'>Saving...</div>");
-	$('.noticeForOldData').slideToggle(500);
-	
-	alert("json da kaam");
 	var json = { 
 					'CodeFromEditor': cm.getValue(),
 					'file' : file,
@@ -130,7 +124,7 @@ function saveChanges()
 
 $('#logoutButton').click(function()
 {
-	alert("logout wala");
+	/*alert("logout wala");*/
 	$.ajax({
 		url: '/CollabEdit/Logout',
 		method : "POST",
@@ -143,6 +137,23 @@ $('#logoutButton').click(function()
 		window.location.assign("index.html");
 		});
 });
+
+$('#mailButton').click(function()
+		{
+			$.ajax({
+				url: '/CollabEdit/Mail',
+				method : "POST",
+				data: 
+				{
+					"logout": "logout"
+				}
+			}).done(function(data,status) {
+				console.log('back from server');
+				window.location.assign("index.html");
+				});
+		});
+
+
 require([ 'dojo/on' ], function(on) {
 	cm.on('change', function(arg1, arg2) {
 		actionToPerform = arg2.origin;
@@ -204,7 +215,7 @@ function openSocket(link){
     // Create a new instance of the websocket
     console.log("LINK ISSSSSSSSSSS" + link);
 
-    webSocket = new WebSocket("ws://localhost:8080/CollabEdit/main");
+    webSocket = new WebSocket("ws://192.168.1.100:8080/CollabEdit/main");
     /**
      * Binds functions to the listeners for the websocket.
      */
@@ -295,15 +306,30 @@ function writeResponse(json){
     	//alert("data saved");
     }
     else if(data!=undefined&&line!=undefined&&char!=undefined)
-    	insertAtCursor(cm,data[0],line,char);
+    {
+    	if(response['action']=='+delete')
+    		deleteAtCursor(cm,data[0],line,char);
+    	else if (response['action']=='+input')
+    		insertAtCursor(cm,data[0],line,char);
+    }
    }
 
-
+function deleteAtCursor(instance, text,line,char) {
+	response = 'response';
+//	console.log("ressssssssspooooooonnnnnnnnnnnssssssssssseeeeee: "+response);
+	//alert("in delete");
+	var prev = instance.getCursor();
+	instance.setCursor({line: line , ch : char });
+	instance.delWordAfter();
+	instance.setCursor(prev.line,  prev.ch);
+	instance.focus();	
+	}
 function insertAtCursor(instance, text,line,char) {
 	response = 'response';
 	console.log("ressssssssspooooooonnnnnnnnnnnssssssssssseeeeee: "+response);
 	var prev = instance.getCursor();
 	instance.setCursor({line: line , ch : char });
+	
 	instance.replaceSelection(text);
 	instance.setCursor(prev.line,  prev.ch);
 	instance.focus();

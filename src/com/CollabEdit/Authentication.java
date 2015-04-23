@@ -440,4 +440,37 @@ public class Authentication
 	    	throw e;
 	    }
     }
+    
+    //This method will get the name of All the users, and create a JSOn and den send it.
+    public static String getUsers()
+    {
+	    Connection con;
+	    Statement stmt;
+	    String sql;
+		JSONObject json = new JSONObject();
+	    try
+	    {
+			Class.forName(classloading);
+			con = DriverManager.getConnection(dbURL, user, Password );
+
+			sql = "select UserId  FROM [CollabEditDB].[dbo].[ExistingUsers]";
+			
+			stmt = con.createStatement();
+			
+			ResultSet rs = stmt.executeQuery(sql);
+
+			int i=1;
+			while(rs.next())
+			{
+				json.put("email"+i, rs.getString("UserId"));
+				i++;
+			}
+			
+	    }
+	    catch(Exception e)
+	    {
+	    	System.out.println("Exception in getUsers() "+e);
+	    }
+	    return json.toString();
+    }
 }

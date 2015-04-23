@@ -44,7 +44,12 @@
 						<option name=other value='other'>others</option>
 					</select>
 					<p>
-						<input id="mail_mod" name="mailofmod" type="email" required placeholder="Share With (gmail ID only)" />
+					<form required>
+						<select required = "required" name='mailofmod' id='mail_mod'> 
+						<option selected value='NULL'>Collaborate With</option>
+						</select>
+					</form>
+<!-- 						<input id="mail_mod" name="mailofmod" type="email" required placeholder="Share With (gmail ID only)" /> -->
 						<input id="add_new" type="button" value="Create File" onClick = "clickFunction()">
 					</p>
 				</form>
@@ -64,6 +69,32 @@
 </html>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script>
+	$.ajax({
+		method: 'POST',
+		url : '/CollabEdit/UsersDb',
+		async: false,
+		error : function(data)
+		{
+			alert("error");
+			
+		},
+		success: function(data)
+		{
+			alert("data gooone");
+			
+		} 
+	}).done(function(data,status){
+		alert("respose aaya h "+data);
+		var i =1;
+		for(index in data)
+		{
+			console.log("in the loop: "+index+" data: "+data[index]);
+			$('#mail_mod').append("<option name='"+i+"'>"+data[index]+"</option>");
+			i++;
+		}
+	})
+
+
 
 	$('#loadCreateFile').click(function(event) 
 	{
@@ -99,14 +130,14 @@
 			
 			fileNames[index++]= data[i].substring(0,data[i].length-36);
 			console.log("Data:    ",fileNames[index-1]);
-			$('#oldFilesList').append("<li onclick=executeFunction('"+fileNames[index-1]+"') class='filename' id = '"+fileNames[index-1]+"'> <a href='main.html'>" +fileNames[index-1]+" </a></li><br>");
+			$('#oldFilesList').append("<li onclick=executeFunction('"+fileNames[index-1]+"') class='filename' id = '"+fileNames[index-1]+"'> <a href='main.html'>" +fileNames[index-1].slice(0,fileNames[index-1].length-1)+" </a></li><br>");
 		}
 
 
 	});
 
 	function executeFunction(i){
-		alert(i);
+		//alert(i);
 		$.ajax({
 			url: '/CollabEdit/SetCurrFile',
 			type: 'POST',
@@ -128,13 +159,14 @@
 		var option = document.getElementById("sel1").value;
 
 		var mail_mod = document.getElementById('mail_mod').value;
+		alert('mail_mod: '+mail_mod);
 		var file = document.getElementById('file').value;
 		var regEx = /@gmail\.com/;
  
-		if(option=='NULL')
+		if((option=='NULL')||(mail_mod=='NULL'))
 		{
 			$('.noticeText').html("");
-			$('.noticeText').append("<div class='errorData'>Select Extension</div>");
+			$('.noticeText').append("<div class='errorData'>Either Extension is not Set or You have not selected User for Sharing </div>");
 			$('.noticeText').append("<br><input type='button' value='Go back' class='goBack'>");
 			$('.noticeForOldData').slideToggle(500);
 			$('.goBack').click(function(event)
@@ -157,6 +189,7 @@
 			//error display set filename	
 		}
 		else if(mail_mod.match(regEx)){
+			
 		$.ajax({
 					method : "POST",
 					url : "/CollabEdit/Collaborate",

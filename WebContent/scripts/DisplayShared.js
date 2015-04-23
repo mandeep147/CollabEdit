@@ -14,7 +14,7 @@ $.ajax({
 	},
 	success : function(data) {
 		// yup run kr isse :P
-		alert("data sent successfully for Displayy");
+		//alert("data sent successfully for Displayy");
 		console.log("dekh raha hu bs")
 		console.log("in success, got this: ", data);
 		console.log("type dekh succes ch: ", typeof data);
@@ -25,7 +25,7 @@ $.ajax({
 	}
 }).done(
 		function(data) {
-			alert("Response for shared Emails: " + data);
+		//	alert("Response for shared Emails: " + data);
 			
 			var completeData = data;
 			var length = data['total'];
