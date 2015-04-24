@@ -29,13 +29,23 @@ public class Registration extends HttpServlet {
 		JSONObject json = new JSONObject();
 		try
 		{
-			if(Authentication.getInstance().createUserCredentials(uname, email, pass))
+			String returnedValue =Authentication.getInstance().createUserCredentials(uname, email, pass); 
+			if(returnedValue.equals("success"))
 			{
 				json.put("response" , "success");
+				json.put("password", "success");
+				
+			}
+			else if(returnedValue.equals("Password"))
+			{
+				json.put("password", "fail");
+				json.put("response" , "fail");			
 			}
 			else
 			{
-				json.put("response" , "fail");			
+				json.put("password", "ok");
+				json.put("response" , "fail");
+				json.put("email", "fail");
 			}
 		}
 		catch(Exception e)

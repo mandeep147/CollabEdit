@@ -1,5 +1,7 @@
 package com.CollabEdit;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,10 +10,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
-import javax.servlet.http.HttpSession;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Authentication
@@ -30,7 +46,7 @@ public class Authentication
 			authentication = new Authentication();
 		return authentication;
 	}
-	boolean createUserCredentials(String uname, String email, String password) throws Exception
+	String createUserCredentials(String uname, String email, String password) throws Exception
 	{
         PrintWriter out;
         Connection con;
@@ -41,6 +57,7 @@ public class Authentication
 		String checkPasswordRegex = "^.+?(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[#$%^&*@]).{8,}$";
 		if(email.matches(checkEmailRegex))
 		{
+			
 			if(password.matches(checkPasswordRegex))
 			{
 				System.out.println("Password MATCHED");
@@ -56,29 +73,31 @@ public class Authentication
 				   int result = stmt.executeUpdate();
 				   System.out.println(result);
 				   if(result > 0)
-					   return true;
+				   {
+					   return "success";
+				   }
 				   else 
-					   return false;
+				   {
+					   return "EmailInDataBase";
+				   }
 					
 				}
 				catch(Exception e)
 				{
 					System.out.println("Exception in createUserCredentials " + e);
+					return "EmailInDataBase";
 				}
-				
-				return true;
 			}
-			
 			else 
 			{
 			
-				return false;
+				return "Password";
 			}
 			
 		}
 		else
 		{
-			return false;
+			return null;
 		}
 	}
 	static boolean checkUserCredentials(String email, String password)
@@ -473,4 +492,141 @@ public class Authentication
 	    }
 	    return json.toString();
     }
+    
+    //Getting the Data from the DB which will be sent via Mail
+    static JSONObject getFileData(String userId, String file,String fromUser)
+    {
+	    Connection con;
+	    Statement stmt;
+	    String sql;
+		JSONObject json = new JSONObject();
+	    try
+	    {
+			Class.forName(classloading);
+			con = DriverManager.getConnection(dbURL, user, Password );
+			sql = "select data   FROM [CollabEditDB].[dbo].[DataTable] where UserId Like '%"+userId+"%' and FileName = '"+file+"'";
+			stmt = con.createStatement();			
+			
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			rs.next();
+			
+			System.out.println("Data Qury: "+sql);
+			
+			json.put("data", rs.getString("data"));
+			
+			System.out.println("second");
+			
+			int typeInt = Integer.parseInt(file.substring(file.length()-1,file.length()));
+			
+			String type = "null";
+			String userName = "null";
+			switch(typeInt)
+			{
+				case 1: type = ".c";break;
+				case 2: type =".cpp";break;
+				case 3:type = ".java";break;
+				case 4:type =".js";break;
+				case 5:type =".html";break;
+				case 6:type =".jsp";break;
+				case 7:type =".css";break;
+				case 8:type =".rb";break;
+				case 9:type =".vb";break;
+				case 10:type =".asp";break;
+				case 11:type =".pl";break;
+				case 12:type =".php";break;
+			}
+			json.put("type",type);
+			
+			
+			sql = "select Username FROM [CollabEditDB].[dbo].[ExistingUsers] where UserId='"+fromUser+"'";
+			System.out.println("query2: "+sql);
+			//stmt = con.createStatement();			
+			rs = stmt.executeQuery(sql);
+			rs.next();
+			userName = rs.getString("Username");
+			
+			json.put("from", userName);
+	    }
+	    catch(Exception e)
+	    {
+	    	System.out.println(e);
+	    	System.out.println("Exception: "+e);
+	    	try {
+				json.put("data","null");
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	    }
+	    System.out.println("data from the Auth is: "+(json.toString()));
+	    return json;
+    }
+    
+    //Send Email "to" with attachment
+	static boolean sendEmailWithAttachments(String toAddress, String fromUser,String location)
+            throws AddressException, MessagingException {
+		
+        String host = "smtp.gmail.com";
+        String port = "587";
+        final String userName = "info.collabedit@gmail.com";
+        final String password = "gtbit2015";
+        String subject = "File Shared Via CollabEdit";
+        String message = fromUser+", has shared this file, with you.";
+
+        // sets SMTP server properties
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", host);
+        properties.put("mail.smtp.port", port);
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.user", userName);
+        properties.put("mail.password", password);
+ 
+        // creates a new session with an authenticator
+        Authenticator auth = new Authenticator() {
+            public PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(userName, password);
+            }
+        };
+        Session session = Session.getInstance(properties, auth);
+ 
+        // creates a new e-mail message
+        Message msg = new MimeMessage(session);
+ 
+        msg.setFrom(new InternetAddress(userName));
+        InternetAddress[] toAddresses = { new InternetAddress(toAddress) };
+        msg.setRecipients(Message.RecipientType.TO, toAddresses);
+        msg.setSubject(subject);
+        msg.setSentDate(new Date());
+ 
+        // creates message part
+        MimeBodyPart messageBodyPart = new MimeBodyPart();
+        messageBodyPart.setContent(message, "text/html");
+ 
+        // creates multi-part
+        Multipart multipart = new MimeMultipart();
+        multipart.addBodyPart(messageBodyPart);
+ 
+        // adds attachments
+        MimeBodyPart attachPart = new MimeBodyPart();
+        try 
+        {
+        	attachPart.attachFile(new File(location));
+        } 
+        catch (IOException ex) 
+        {
+            ex.printStackTrace();
+        	return false;
+        }
+        multipart.addBodyPart(attachPart);
+         
+        // sets the multi-part as e-mail's content
+        msg.setContent(multipart);
+ 
+        // sends the e-mail
+        Transport.send(msg);
+        return true;
+    }
+
 }

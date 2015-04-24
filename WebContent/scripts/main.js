@@ -139,19 +139,44 @@ $('#logoutButton').click(function()
 });
 
 $('#mailButton').click(function()
-		{
-			$.ajax({
-				url: '/CollabEdit/Mail',
-				method : "POST",
-				data: 
-				{
-					"logout": "logout"
-				}
-			}).done(function(data,status) {
-				console.log('back from server');
-				window.location.assign("index.html");
-				});
+{
+	$('#mailDiv').css("display", "");
+	$('#mailDiv').html("");
+	$('#mailDiv').append("<input type='email' id='emailTo' placeholder='Enter E-mail ID ' required>");
+	$('#mailDiv').append("<br><input type='button' id='sendMail' onclick='sendMail()'value='Send'>");
+	$('#mailDiv').append("<input type='button' id='backButton' onclick='getBack() 'value='Back'>");
+	$('#mailDiv').slideToggle(1000);
+	
+	//Back Click Event
+	$('#backButton').click(function(event)
+	{
+		$('#mailDiv').slideToggle(1000);
+//		$('#mailDiv').css("display", "none");
+	});
+	
+	//Send Email
+	$('#sendMail').click(function(event)
+	{
+		var userId = document.getElementById('emailTo').value;
+		$.ajax({
+			data: {
+				data: userId
+			},
+			type: "POST",
+			url: "/CollabEdit/Mail",
+			success: function(data){
+				alert("data sent");
+			},
+			error: function(data){
+				alert("error aata");
+			} 
+			
+		}).done(function(data,status){
+			alert("got the response");
 		});
+	});
+	
+});
 
 
 require([ 'dojo/on' ], function(on) {
@@ -215,7 +240,7 @@ function openSocket(link){
     // Create a new instance of the websocket
     console.log("LINK ISSSSSSSSSSS" + link);
 
-    webSocket = new WebSocket("ws://192.168.1.100:8080/CollabEdit/main");
+    webSocket = new WebSocket("ws://192.168.1.103:8080/CollabEdit/main");
     /**
      * Binds functions to the listeners for the websocket.
      */

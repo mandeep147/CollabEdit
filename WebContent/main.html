@@ -4,19 +4,32 @@
 
 <head>
 <title>main.jsp Loaded</title>
-	<script
-		src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
 </head>
 <link rel="stylesheet"
 	href="../CollabEdit/CodeMirror/lib/codemirror.css">
 <link rel="stylesheet" href="../CollabEdit/CodeMirror/theme/mbo.css">
 <style type="text/css">
- {
-	padding: 0px;
-	margin: 0px;
-}
+{
+padding
+:
+ 
+0
+px
+;
 
+	
+margin
+:
+ 
+0
+px
+;
+
+
+}
 .selectedWidget {
 	border: 2px solid blue;
 }
@@ -24,6 +37,8 @@
 html,body {
 	height: 100%;
 	font-family: 'Segoe UI';
+	margin:0;
+	padding:0;
 }
 
 .cm-s-mbo {
@@ -32,35 +47,35 @@ html,body {
 	font-size: 15px;
 	width: 80% !important;
 	height: 718px !important;
-	height: 200%;
+	z-index: 1 !important;
 }
 
 #save {
 	position: fixed;
-	width: 19%; top : 0px;
+	width: 19%;
+	top: 0px;
 	right: 0;
 	border-left: 1px solid white;
 	padding: 10px;
-	
 }
 
 #saveButton,#logoutButton {
 	border: 0px solid white;
-	background-color: rgb(86,164,246);
+	background-color: rgb(86, 164, 246);
 	color: white;
 	cursor: pointer;
 	padding: 5px 10px;
-	margin-bottom:3px;
+	margin-bottom: 3px;
 }
-#saveButton
-{
+
+#saveButton {
 	margin-right: 40px;
 }
 
 #usersOnline {
 	z-index: -3;
 	position: fixed;
-	top:40px;
+	top: 40px;
 	right: 0;
 	border-left: 1px solid white;
 	width: 20%;
@@ -79,25 +94,38 @@ html,body {
 	width: 32px;
 	height: 32px;
 }
-#logoutButton
-{
+
+#logoutButton {
 	float: right;
 }
-.errorData
-{
+
+.errorData {
 	text-align: center;
 }
-.goBack
-{
+
+.goBack {
 	font-size: 20px;
 	border: 0px solid black;
 	cursor: pointer;
 	background-color: white;
-	color: rgb(86,164,246);
+	color: rgb(86, 164, 246);
 	margin: 0 auto;
 	display: block;
 	border-radius: 3px;
 	padding: 4px;
+}
+
+#mailDiv {
+	display:none;
+	height: 200px;
+	width: 100%;
+	margin-top: 100px;
+	z-index: 1000;
+	background-color: rgba(0, 0, 0, 0.5);
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
 }
 </style>
 <body style="height: 107px;">
@@ -106,32 +134,31 @@ html,body {
 	<script src="../CollabEdit/CodeMirror/lib/codemirror.js"></script>
 	<script src="../CollabEdit/CodeMirror/mode/javascript/javascript.js"></script>
 	<script src="../CollabEdit/dojo/dojo.js" data-dojo-config="async:true"></script>
-
 	<form>
 		<textarea id='myTextArea'>
-        	//Enter your code here
-    	</textarea>
-
-		<div id='store' myattr=''></div>
+	        	//Enter your code here
+	    	</textarea>
 
 		<div id='right'>
 			<div id='save'>
-				<button id='saveButton' onClick="saveChanges()">Save Changes</button>
-				<input type='button' value='Logout' id='logoutButton'>
-				<input type = 'button' id='mailButton' value='mail kr'>
+				<button id='saveButton' onClick="saveChanges()">Save
+					Changes</button>
+				<input type='button' value='Logout' id='logoutButton'> <input
+					type='button' id='mailButton' value='Mail '>
 			</div>
 			<div id='usersOnline'></div>
 		</div>
 	</form>
-		<div class="noticeForOldData">
+
+	<div class="noticeForOldData">
 		<div class="divForBlueColor">
-			<div class="noticeText">
-			</div>
+			<div class="noticeText"></div>
 		</div>
 	</div>
-	
+		<div id='mailDiv'>
+		</div>
+		
 	<script>
-	
 		var cm = CodeMirror.fromTextArea(myTextArea, {
 			lineNumbers : true,
 			theme : "mbo",

@@ -41,7 +41,6 @@
 						<option value='10'>.asp</option>
 						<option value='11'>.pl</option>
 						<option value='12'>.php</option>
-						<option name=other value='other'>others</option>
 					</select>
 					<p>
 					<form required>
@@ -69,32 +68,28 @@
 </html>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script>
+
+//This ajax will gget all the userMail IDs which have been registered with CollabEdit
 	$.ajax({
 		method: 'POST',
 		url : '/CollabEdit/UsersDb',
 		async: false,
 		error : function(data)
 		{
-			alert("error");
-			
 		},
 		success: function(data)
 		{
-			alert("data gooone");
-			
 		} 
 	}).done(function(data,status){
-		alert("respose aaya h "+data);
 		var i =1;
 		for(index in data)
 		{
-			console.log("in the loop: "+index+" data: "+data[index]);
 			$('#mail_mod').append("<option name='"+i+"'>"+data[index]+"</option>");
 			i++;
 		}
 	})
 
-
+//making OldFiles Div Visible
 
 	$('#loadCreateFile').click(function(event) 
 	{
@@ -117,7 +112,7 @@
 	});
 
 
-
+//Getting the names of the old files, which are either created or shared with the logged In user
 	$.ajax({
 		url: '/CollabEdit/getPrevData',
 		type: 'POST',
@@ -136,6 +131,7 @@
 
 	});
 
+//This is the click function on the Old Files
 	function executeFunction(i){
 		//alert(i);
 		$.ajax({
@@ -200,7 +196,8 @@
 					},
 					success : function(data)
 					{
-						
+						alert("sendingn this: "+data);
+						alert("stringify: "+JSON.stringify(data));
 					},
 					error : function(data)
 					{
