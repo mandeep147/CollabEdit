@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Welcome User</title>
-<link rel="stylesheet" type="text/css" href="css/index.css">
-<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700'
+	<title>Welcome User</title>
+	<link rel="stylesheet" type="text/css" href="css/index.css">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700'
 	rel='stylesheet' type='text/css'>
-<script
+	<script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 </head>
 <body>
@@ -14,24 +14,27 @@
 			<div class='loginText'>LOG IN</div>
 			<hr>
 			<label class='usernameLabel label'> Your Email</label> <input
-				type="text" id='username' class="inputs username"
-				placeholder="eg. abc@gmail.com"> <label
-				class='passwordLabel label'> Your Password</label> <input
-				type="password" id='password' class="inputs password"
-				placeholder="eg. X8df!90EO"> <a href="forgetPass.html">Forgot
-				Password</a> <br> <br> <input type="button" value="Login"
+			type="text" id='username' class="inputs username"
+			placeholder="eg. abc@gmail.com"> <label
+			class='passwordLabel label'> Your Password</label> <input
+			type="password" id='password' class="inputs password"
+			placeholder="eg. X8df!90EO"> 
+			<button id='forgotPassword' href="forgotPass.html">Forgot
+				Password</button>
+				<br> <br>
+				<input type="button" value="Login"
 				class='login' onClick="validateLogin()"> <br>
-			<br>
-			<br>
-			<div class='join'>
-				<span class='toggleText'>Not a member ?</span> <input type='button'
+				<br>
+				<br>
+				<div class='join'>
+					<span class='toggleText'>Not a member ?</span> <input type='button'
 					value='Join us' class='joinUs toggle'>
+				</div>
 			</div>
-		</div>
-		<div class='mainSignup'>
-			<div class='loginText'>SIGN UP</div>
-			<hr>
-			<label class='usernameLabel label'> Your Username</label> <input
+			<div class='mainSignup'>
+				<div class='loginText'>SIGN UP</div>
+				<hr>
+				<label class='usernameLabel label'> Your Username</label> <input
 				type="text" class="username inputs" id='usernamesignup'
 				placeholder="UserName"> <label class='emailLabel label'>
 				Your Email</label> <input type="email" class="email inputs" id='emailsignup'
@@ -42,24 +45,224 @@
 				class='confirmPasswordLabel label'> Confirm Password</label> <input
 				type="password" class="confPassword inputs"
 				id='passwordsignup_confirm' placeholder="eg. X8df!90EO"> <br>
-			<input type="button" value="Signup" class='signup'
+				<input type="button" value="Signup" class='signup'
 				onClick="validateSignUp()"> <br>
-			<br>
-			<br>
-			<div class='join'>
-				<span class='toggleText'>Already a member ?</span> <input
+				<br>
+				<br>
+				<div class='join'>
+					<span class='toggleText'>Already a member ?</span> <input
 					type='button' value='Login' class='loginBack toggle'>
+				</div>
+			</div>
+
+			<div class='forgotPasswordDiv'>
+				<div class='forgotPasswordOne'>
+					<label id="confirm">A confirmation code will be sent to your registered id<br></label>
+					<br>
+					<input type="text" id="gmail" placeholder="Enter your Gmail id here">
+					<input type="button" id="sendCode" value="Submit"> 
+					<input type="button" id='backToLogin' value="Back to Login">
+				</div>
+				<div class='forgotPasswordTwo'>
+					<p id="checkMail">Check your mail for confirmation code</p>
+					<input type="password" class='inputs'id="inPass" placeholder="Enter confirmation code">
+					<input type="password" class='inputs'id="inNewPass" placeholder="Enter New Password"> 
+					<input type="password" class='inputs'id="inRenewpass" placeholder="Re-enter New Password"> 
+					<input type="submit" id="changePass" value="update"> 
+					<input type="button" id='backToLoginPage' value="Back to Login">
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="noticeForOldData">
-		<div class="divForBlueColor">
-			<div class="noticeText"></div>
+		<div class="noticeForOldData">
+			<div class="divForBlueColor">
+				<div class="noticeText"></div>
+			</div>
 		</div>
-	</div>
-</body>
-</html>
-<script type="text/javascript">
+	</body>
+	</html>
+	<script type="text/javascript">
+		var UserId = '';
+		$('#forgotPassword').click(function(event) 
+		{
+			$('.mainLogin').slideUp(500);
+			$('.forgotPasswordDiv').slideDown(500);
+		});
+		$('#backToLogin').click(function(event) 
+		{	
+			$('.mainLogin').slideDown(500);
+			$('.forgotPasswordDiv').slideUp(500);
+		});
+		$('#backToLoginPage').click(function(event) 
+		{	
+			$('.mainLogin').slideDown(500);
+			$('.forgotPasswordDiv').slideUp(500);
+		});
+		$('#sendCode').click(function(event) 
+		{
+			var userId = document.getElementById('gmail').value;
+			var regEx = /@gmail\.com/;
+			if(userId.match(regEx))
+			{
+				$.ajax({
+					method : "POST",
+					url : "/CollabEdit/Forgot",
+					data : {
+						userEmail : userId
+					}
+				}).done(function(data, status) 
+				{
+					if(data['result']=='success')
+					{
+						UserId = userId; 
+						$('.forgotPasswordOne').slideUp(500);
+						$('.forgotPasswordTwo').slideDown(500);
+						$.ajax({
+							method : "POST",
+							url : "/CollabEdit/GeneratREmail",
+							data : {
+								userEmail : userId
+							}
+						}).done(function(data, status) 
+						{
+							
+							if(data['result']=='success')
+							{
+								console.log("ho gya mail dekh "+data);
+							}
+							else
+							{
+								$('.noticeText').html("");
+								$('.noticeText').append("<div class='errorData'>The System is not able to send you mail, try again later</div>");
+								$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+								$('.noticeForOldData').slideToggle(500);
+								$('.goBack').click(function(event)
+								{
+									$('.noticeForOldData').slideToggle(500);
+								});
+							}
+						});
+					}
+					else
+					{
+						$('.noticeText').html("");
+						$('.noticeText').append("<div class='errorData'>This Email is not Registered</div>");
+						$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+						$('.noticeForOldData').slideToggle(500);
+						$('.goBack').click(function(event)
+						{
+							$('.noticeForOldData').slideToggle(500);
+						});				
+
+					}
+				});
+			}
+			else
+			{
+				$('.noticeText').html("");
+				$('.noticeText').append("<div class='errorData'>Enter your GMAIL id</div>");
+				$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+				$('.noticeForOldData').slideToggle(500);
+				$('.goBack').click(function(event)
+				{
+					$('.noticeForOldData').slideToggle(500);
+				});				
+			}
+
+		});
+		
+		$('#changePass').click(function(event) 
+		{
+			var pcode = document.getElementById('inPass').value;
+			var pass = document.getElementById('inNewPass').value;
+			var rePass = document.getElementById('inRenewpass').value;
+		
+			if(pass===''||rePass===''||pcode==='')
+			{
+				$('.noticeText').html("");
+				$('.noticeText').append("<div class='errorData'>Fill all the fields first</div>");
+				$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+				$('.noticeForOldData').slideToggle(500);
+				$('.goBack').click(function(event)
+				{
+					$('.noticeForOldData').slideToggle(500);
+				});
+			}
+			else if(rePass!=pass)
+			{
+				$('.noticeText').html("");
+				$('.noticeText').append("<div class='errorData'>Passwords don't match</div>");
+				$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+				$('.noticeForOldData').slideToggle(500);
+				$('.goBack').click(function(event)
+				{
+					$('.noticeForOldData').slideToggle(500);
+				});
+			}
+			else
+			{
+				alert("sending for final evaluation userID: "+UserId);
+
+				$.ajax({
+					method : "POST",
+					url : "/CollabEdit/UpdatePass",
+					data : {
+						userId : UserId,
+						passCode : pcode,
+						password : pass
+					}
+				}).done(function(data, status) 
+				{
+					if(data['response']=='success')
+					{
+						$('.noticeText').html("");
+						$('.noticeText').append("<div class='errorData'>Password Changed Successfully</div>");
+						$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+						$('.noticeForOldData').slideToggle(500);
+						$('.goBack').click(function(event)
+						{
+							$('.noticeForOldData').slideToggle(500);
+						});
+					}
+					else if(data['password']=='fail')
+					{
+						$('.noticeText').html("");
+						$('.noticeText').append("<div class='errorData'>Password must satisfy these conditions<br><li>length must be 9 or more</li><br> <li>must contain atleast 1  digit, capital letter, small letter, special character</li></div>");
+						$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+						$('.noticeForOldData').slideToggle(500);
+						$('.goBack').click(function(event)
+						{
+							$('.noticeForOldData').slideToggle(500);
+						});
+					}
+					else if(data['passCode']=='fail')
+					{
+						$('.noticeText').html("");
+						$('.noticeText').append("<div class='errorData'>Pass-Code Did not Matched!</div>");
+						$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+						$('.noticeForOldData').slideToggle(500);
+						$('.goBack').click(function(event)
+						{
+							$('.noticeForOldData').slideToggle(500);
+						});
+					}
+					else
+					{
+						$('.noticeText').html("");
+						$('.noticeText').append("<div class='errorData'>Updation Not Successful</div>");
+						$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+						$('.noticeForOldData').slideToggle(500);
+						$('.goBack').click(function(event)
+						{
+							$('.noticeForOldData').slideToggle(500);
+						});
+
+					}
+				});
+				alert("in the else part");
+			}
+		});
+		
+		
 		function validateLogin() {
 			
 			if(document.getElementById('username').value==''||document.getElementById('password').value=='')
@@ -76,7 +279,7 @@
 			else
 			{
 				var user = document.getElementById('username').value;
-	
+
 				var regEx = /@gmail\.com/;
 				//	alert("username: "+user);
 				if (user.match(regEx)) 
@@ -90,21 +293,21 @@
 							password : document.getElementById('password').value
 						}
 					}).done(function(data, status) {
-				
+
 						if (data['response'] == 'success') {	
 							window.location.assign("create_file.html");
 						} else {
-									$('.noticeText').html("");
-									$('.noticeText').append("<div class='errorData'>No data FOUND</div>");
-									$('.noticeText').append("<br><input type='button' value='Go back' class='goBack'>");
-									$('.noticeForOldData').slideToggle(500);
-									$('.goBack').click(function(event)
-									{
-										$('.noticeForOldData').slideToggle(500);
-									});
-							}
+							$('.noticeText').html("");
+							$('.noticeText').append("<div class='errorData'>No data FOUND</div>");
+							$('.noticeText').append("<br><input type='button' value='Go back' class='goBack'>");
+							$('.noticeForOldData').slideToggle(500);
+							$('.goBack').click(function(event)
+							{
+								$('.noticeForOldData').slideToggle(500);
+							});
+						}
 					});
-	
+
 				} else {
 					$('.noticeText').html("");
 					$('.noticeText').append("<div class='errorData'>Enter only gmail id</div>");
@@ -117,10 +320,10 @@
 				}
 			}
 		}
-</script>
+	</script>
 
 
-<script type="text/javascript">
+	<script type="text/javascript">
 		function validateSignUp() {
 			
 			if(document.getElementById('usernamesignup').value==''||document.getElementById('emailsignup').value==''||document.getElementById('passwordsignup').value==''||document.getElementById('passwordsignup_confirm').value=='')
@@ -144,84 +347,84 @@
 				if(p1==p2){
 					if (userID.match(regEx)){
 						$
-								.ajax(
-										{
-											method : "POST",
-											url : "/CollabEdit/Registration",
-											data : {
-												usernamesignup : document
-														.getElementById("usernamesignup").value,
-												emailsignup : userID,
-												passwordsignup : document
-														.getElementById("passwordsignup").value
-											}
-										}).done(function(data, status) {
-
-											console.log("typeof: " + (typeof data));
-											if (data['response'] == 'success') 
-											{
-													$('.noticeText').html("");
-													$('.noticeText').append("<div class='errorData'>Signed In successfully, Please Login to continue</div>");
-													$('.noticeText').append("<br><input type='button' value='Login' class='goBack'>");
-													$('.noticeForOldData').slideToggle(500);
-													$('.goBack').click(function(event)
-													{
-														window.location.assign("index.html");
-													});
-											} 
-											else if(data['password']=='fail') 	
-											{
-												$('.noticeText').html("");
-												$('.noticeText').append("<div class='errorData'>Password must satisfy these conditions<br><li>Length must be 9 or more</li><br> <li>Must contain atleast 1 <ol><li> Digit</li><li> Capital Letter</li> <li> Small Letter</li><li> Special Character</li></ol></li></div>");
-												$('.noticeText').append("<br><input type='button' value='Go back' class='goBack'>");
-												$('.noticeForOldData').slideToggle(500);
-												$('.goBack').click(function(event)
-												{
-													$('.noticeForOldData').slideToggle(500);
-												});
-											}
-											else if(data['email']=='fail')
-											{
-												$('.noticeText').html("");
-												$('.noticeText').append("<div class='errorData'>E-mail id Already Exists </div>");
-												$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
-												$('.noticeForOldData').slideToggle(500);
-												$('.goBack').click(function(event)
-												{
-													$('.noticeForOldData').slideToggle(500);
-												});
-											}
-									});
-		
-					} else {
-								
-						$('.noticeText').html("");
-						$('.noticeText').append("<div class='errorData'>Enter GMAIL id only</div>");
-						$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
-						$('.noticeForOldData').slideToggle(500);
-						$('.goBack').click(function(event)
+						.ajax(
 						{
-							$('.noticeForOldData').slideToggle(500);
-						});
-		
-					}
-				}else
-				{
-					$('.noticeText').html("");
-					$('.noticeText').append("<div class='errorData'>Passwords did not match</div>");
-					$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
-					$('.noticeForOldData').slideToggle(500);
-					$('.goBack').click(function(event)
-					{
-						$('.noticeForOldData').slideToggle(500);
-					});
+							method : "POST",
+							url : "/CollabEdit/Registration",
+							data : {
+								usernamesignup : document
+								.getElementById("usernamesignup").value,
+								emailsignup : userID,
+								passwordsignup : document
+								.getElementById("passwordsignup").value
+							}
+						}).done(function(data, status) {
 
-				}
-			}
-		}
-	</script>
+							console.log("typeof: " + (typeof data));
+							if (data['response'] == 'success') 
+							{
+								$('.noticeText').html("");
+								$('.noticeText').append("<div class='errorData'>Signed In successfully, Please Login to continue</div>");
+								$('.noticeText').append("<br><input type='button' value='Login' class='goBack'>");
+								$('.noticeForOldData').slideToggle(500);
+								$('.goBack').click(function(event)
+								{
+									window.location.assign("index.html");
+								});
+							} 
+							else if(data['password']=='fail') 	
+							{
+								$('.noticeText').html("");
+								$('.noticeText').append("<div class='errorData'>Password must satisfy these conditions<br><li>length must be 9 or more</li><br> <li>must contain atleast 1  digit, capital letter, small letter, special character</li></div>");
+								$('.noticeText').append("<br><input type='button' value='Go back' class='goBack'>");
+								$('.noticeForOldData').slideToggle(500);
+								$('.goBack').click(function(event)
+								{
+									$('.noticeForOldData').slideToggle(500);
+								});
+							}
+							else if(data['email']=='fail')
+							{
+								$('.noticeText').html("");
+								$('.noticeText').append("<div class='errorData'>E-mail id Already Exists </div>");
+								$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+								$('.noticeForOldData').slideToggle(500);
+								$('.goBack').click(function(event)
+								{
+									$('.noticeForOldData').slideToggle(500);
+								});
+							}
+						});
+
+} else {
+
+	$('.noticeText').html("");
+	$('.noticeText').append("<div class='errorData'>Enter GMAIL id only</div>");
+	$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+	$('.noticeForOldData').slideToggle(500);
+	$('.goBack').click(function(event)
+	{
+		$('.noticeForOldData').slideToggle(500);
+	});
+
+}
+}else
+{
+	$('.noticeText').html("");
+	$('.noticeText').append("<div class='errorData'>Passwords did not match</div>");
+	$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+	$('.noticeForOldData').slideToggle(500);
+	$('.goBack').click(function(event)
+	{
+		$('.noticeForOldData').slideToggle(500);
+	});
+
+}
+}
+}
+</script>
 <script type="text/javascript">
- 	$('.joinUs').click(function(event)
+	$('.joinUs').click(function(event)
 	{
 		$('.mainLogin').slideUp(500);
 		$('.mainSignup').slideDown(500);

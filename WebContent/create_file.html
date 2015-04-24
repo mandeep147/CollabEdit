@@ -8,11 +8,8 @@
 	<div id="rest">
 		<div  id="form">
 			<form autocomplete="on" method = "post">
-				<button id="loadCreateFile">Create New File
-			
-				</button>
-				<button id="editOldFiles">Edit Old Files
-				</button>
+			<input type='button'	 id="loadCreateFile" value="Create New File">
+			<input type="button" id="editOldFiles" value='Edit Old Files'>
 
 
 				<div id="oldFiles">
@@ -24,9 +21,10 @@
 
 				<div id='createFileOuterDiv'>
 					<div id="create_file">Please add details for new File</div>
-					<input id="file" name="nameoffile"  type="text" required placeholder="Name of File" >
+<!-- 					<input type="text" id='file' class="inputs file" name="nameoffile" placeholder="Name of File"> -->
+ 					<input id="file" name="nameoffile"  type="text" placeholder="Name of File" > 
 					<br>
-					<select required name='select1' id='sel1'>
+					<select name='select1' id='sel1'>
 						<option selected value='NULL'>select the extension type</option>
 						<option value='1'>.c</option>
 						<option value='2'>.cpp</option>
@@ -43,11 +41,9 @@
 						<option value='12'>.php</option>
 					</select>
 					<p>
-					<form required>
-						<select required = "required" name='mailofmod' id='mail_mod'> 
+						<select name='mailofmod' id='mail_mod'> 
 						<option selected value='NULL'>Collaborate With</option>
 						</select>
-					</form>
 <!-- 						<input id="mail_mod" name="mailofmod" type="email" required placeholder="Share With (gmail ID only)" /> -->
 						<input id="add_new" type="button" value="Create File" onClick = "clickFunction()">
 					</p>
@@ -94,11 +90,9 @@
 	$('#loadCreateFile').click(function(event) 
 	{
 		if($('#oldFiles').is(":visible"))
-			$('#oldFiles').slideToggle(100);
-		setTimeout(function()
-		{	
-			$('#createFileOuterDiv').slideDown(500);
-		},200);
+			$('#oldFiles').slideToggle(100);		
+		$('#createFileOuterDiv').slideDown(500);
+		alert("out");
 	});
 
 	$('#editOldFiles').click(function(event) 
@@ -151,98 +145,99 @@
 <script type="text/javascript">
 	function clickFunction()
 	{
-		
-		var option = document.getElementById("sel1").value;
-
-		var mail_mod = document.getElementById('mail_mod').value;
-		alert('mail_mod: '+mail_mod);
-		var file = document.getElementById('file').value;
-		var regEx = /@gmail\.com/;
- 
-		if((option=='NULL')||(mail_mod=='NULL'))
+		if(document.getElementById('file').value===''||document.getElementById('sel1').value==='NULL'||document.getElementById('mail_mod').value==='NULL')
 		{
 			$('.noticeText').html("");
-			$('.noticeText').append("<div class='errorData'>Either Extension is not Set or You have not selected User for Sharing </div>");
-			$('.noticeText').append("<br><input type='button' value='Go back' class='goBack'>");
-			$('.noticeForOldData').slideToggle(500);
-			$('.goBack').click(function(event)
-			{
-				$('.noticeForOldData').slideToggle(500);
-			});
-			
-		}
-		else if(file=='null'||file==undefined)
-		{
-			$('.noticeText').html("");
-			$('.noticeText').append("<div class='errorData'>Set your filename</div>");
+			$('.noticeText').append("<div class='errorData'>Fill all the details </div>");
 			$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
 			$('.noticeForOldData').slideToggle(500);
 			$('.goBack').click(function(event)
 			{
 				$('.noticeForOldData').slideToggle(500);
 			});
-	
-			//error display set filename	
+		
 		}
-		else if(mail_mod.match(regEx)){
+		else
+		{
+			var option = document.getElementById("sel1").value;
+	
+			var mail_mod = document.getElementById('mail_mod').value;
+			//alert('mail_mod: '+mail_mod);
+			var file = document.getElementById('file').value.trim();
+			var regEx = /\,|\s|\W/g;
 			
-		$.ajax({
-					method : "POST",
-					url : "/CollabEdit/Collaborate",
-					data : {
-						nameoffile 	: document.getElementById('file').value,
-						select1 	: document.getElementById("sel1").value,
-				  		mailofmod 	: document.getElementById('mail_mod').value
-					},
-					success : function(data)
-					{
-						alert("sendingn this: "+data);
-						alert("stringify: "+JSON.stringify(data));
-					},
-					error : function(data)
-					{
-						$('.noticeText').html("");
-						$('.noticeText').append("<div class='errorData'>Can not Connect to Server, Try again</div>");
-						$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
-						$('.noticeForOldData').slideToggle(500);
-						$('.goBack').click(function(event)
+			if(file.match(regEx)||file.length>11)
+			{
+				$('.noticeText').html("");
+				$('.noticeText').append("<div class='errorData'><li>File name should not consist of any Spaces, Comma, or any Special Character </li><li> Length must be less than 12 characters</li></div>");
+				$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+				$('.noticeForOldData').slideToggle(500);
+				$('.goBack').click(function(event)
+				{
+					$('.noticeForOldData').slideToggle(500);
+				});
+			}
+			
+			else {
+				
+			$.ajax({
+						method : "POST",
+						url : "/CollabEdit/Collaborate",
+						data : {
+							nameoffile 	: document.getElementById('file').value,
+							select1 	: document.getElementById("sel1").value,
+					  		mailofmod 	: document.getElementById('mail_mod').value
+						},
+						success : function(data)
 						{
-							$('.noticeForOldData').slideToggle(500);
-						});
-						
-
-					}
-				}).done(function(data, status) {
-						if (data['response'] == 'success') 
-						{	
-							window.location.assign("main.html");
-						} 
-						else 
+							alert("sendingn this: "+data);
+							alert("stringify: "+JSON.stringify(data));
+						},
+						error : function(data)
 						{
 							$('.noticeText').html("");
-							$('.noticeText').append("<div class='errorData'>File with the same name, already Exists</div>");
+							$('.noticeText').append("<div class='errorData'>Can not Connect to Server, Try again</div>");
 							$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
 							$('.noticeForOldData').slideToggle(500);
 							$('.goBack').click(function(event)
 							{
 								$('.noticeForOldData').slideToggle(500);
-							});			
-						}
-			});
-		}
-		else	
-		{
-			$('.noticeText').html("");
-			$('.noticeText').append("<div class='errorData'>Enter your gmail id</div>");
-			$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
-			$('.noticeForOldData').slideToggle(500);
-			$('.goBack').click(function(event)
-			{
-				$('.noticeForOldData').slideToggle(500);
-			});
+							});
+							
 	
-			//email id not gmail
-		}
+						}
+					}).done(function(data, status) {
+							if (data['response'] == 'success') 
+							{	
+								window.location.assign("main.html");
+							} 
+							else 
+							{
+								$('.noticeText').html("");
+								$('.noticeText').append("<div class='errorData'>File with the same name, already Exists</div>");
+								$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+								$('.noticeForOldData').slideToggle(500);
+								$('.goBack').click(function(event)
+								{
+									$('.noticeForOldData').slideToggle(500);
+								});			
+							}
+				});
+			}
+/* 			else	
+			{
+				$('.noticeText').html("");
+				$('.noticeText').append("<div class='errorData'>Enter your gmail id</div>");
+				$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+				$('.noticeForOldData').slideToggle(500);
+				$('.goBack').click(function(event)
+				{
+					$('.noticeForOldData').slideToggle(500);
+				});
+		
+				//email id not gmail
+			}
+ */		}
 	}
 
 </script>

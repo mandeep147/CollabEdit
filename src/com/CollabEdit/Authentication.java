@@ -563,70 +563,62 @@ public class Authentication
 	    return json;
     }
     
-    //Send Email "to" with attachment
-	static boolean sendEmailWithAttachments(String toAddress, String fromUser,String location)
-            throws AddressException, MessagingException {
-		
-        String host = "smtp.gmail.com";
-        String port = "587";
-        final String userName = "info.collabedit@gmail.com";
-        final String password = "gtbit2015";
-        String subject = "File Shared Via CollabEdit";
-        String message = fromUser+", has shared this file, with you.";
+	
+	//Checking whether a particular mail ID exist in the database or not
+	Boolean checkEmail(String email)
+	{
+	    Connection con;
+	    Statement stmt;
+	    String sql;
+		JSONObject json = new JSONObject();
+	    try
+	    {
+			Class.forName(classloading);
+			con = DriverManager.getConnection(dbURL, user, Password );
+			sql = "  select Username FROM [CollabEditDB].[dbo].[ExistingUsers] where UserId = '"+email+"'";
+			stmt = con.createStatement();			
+			
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			rs.next();
+			
+			String val = rs.getString("Username");
+			return true;
+	    }
+	    catch(Exception e)
+	    {
+	    	return false;
+	    }
+	}
+	
+	//Updating the password field of the userId
+	Boolean updatePassword(String userEmail, String password)
+	{
+	    Connection con;
+	    PreparedStatement stmt;
+	    String sql;
+		JSONObject json = new JSONObject();
+	    try
+	    {
+			Class.forName(classloading);
+			con = DriverManager.getConnection(dbURL, user, Password );
 
-        // sets SMTP server properties
-        Properties properties = new Properties();
-        properties.put("mail.smtp.host", host);
-        properties.put("mail.smtp.port", port);
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.user", userName);
-        properties.put("mail.password", password);
- 
-        // creates a new session with an authenticator
-        Authenticator auth = new Authenticator() {
-            public PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(userName, password);
-            }
-        };
-        Session session = Session.getInstance(properties, auth);
- 
-        // creates a new e-mail message
-        Message msg = new MimeMessage(session);
- 
-        msg.setFrom(new InternetAddress(userName));
-        InternetAddress[] toAddresses = { new InternetAddress(toAddress) };
-        msg.setRecipients(Message.RecipientType.TO, toAddresses);
-        msg.setSubject(subject);
-        msg.setSentDate(new Date());
- 
-        // creates message part
-        MimeBodyPart messageBodyPart = new MimeBodyPart();
-        messageBodyPart.setContent(message, "text/html");
- 
-        // creates multi-part
-        Multipart multipart = new MimeMultipart();
-        multipart.addBodyPart(messageBodyPart);
- 
-        // adds attachments
-        MimeBodyPart attachPart = new MimeBodyPart();
-        try 
-        {
-        	attachPart.attachFile(new File(location));
-        } 
-        catch (IOException ex) 
-        {
-            ex.printStackTrace();
-        	return false;
+			sql = "Update dbo.ExistingUsers set UserPassword = ? where UserId = ?";
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, password);
+			stmt.setString(2, userEmail);
+			int result = stmt.executeUpdate();
+			System.out.println(result);
+			if(result > 0)
+				return true;
+			else 	
+				return false;
         }
-        multipart.addBodyPart(attachPart);
-         
-        // sets the multi-part as e-mail's content
-        msg.setContent(multipart);
- 
-        // sends the e-mail
-        Transport.send(msg);
-        return true;
-    }
-
+	    catch(Exception e)
+	    {
+	    	System.out.println("Updation passwrd problem");
+	    	System.out.println(e);
+	    	return false;
+	    }
+	}
 }

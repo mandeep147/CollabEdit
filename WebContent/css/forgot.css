@@ -1,0 +1,49 @@
+body{
+	font-family: Cambria, Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif;
+	background: #fff url(../images/bg.jpg) repeat top left;
+	font-weight: 400;
+	font-size: 15px;
+	color: #1d3c41;
+	overflow-y: scroll;
+}
+#confirm, #gmail, #checkMail, #hideForm , #sendCode, #changePass{
+	font-family: Cambria, Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif;
+	font-weight: 400;
+	font-size: 20px;
+}
+#confirm{
+	margin-left: 350px;
+	color: brown;
+}
+#gmail{
+	margin-top: 120px;
+	margin-left: 50px;
+	color: black;	
+}
+#sendCode{
+	margin-left: 600px;
+}
+#changePass{
+	margin-left: 450px;
+}
+#sendCode, #changePass{
+	display: block;
+	margin-top: 20px;
+}
+#checkMail{
+	margin-left: 310px;
+	color: brown;
+	font-size: 25px;
+}
+input[type="password"]{
+	display: block;
+	margin-left: 300px;
+	margin-top: 20px;
+	width: 450px;
+	height: 40px;
+	padding-left: 160px;
+}
+#hideDiv{
+	margin-top: 120px;
+	margin-left: 150px;
+}

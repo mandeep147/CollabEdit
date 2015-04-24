@@ -72,7 +72,7 @@ public class Mail extends HttpServlet {
 					try{
 						System.out.println("userId: "+userId+" UserName: "+UserName+" loc: "+loc);
 						System.out.println("ideal case: manpreet22thesingh@gmail.com,gtbit,C:/Users/waheguru/AppData/Local/Temp/CollabEdit/colla2.cpp");
-						if(Authentication.getInstance().sendEmailWithAttachments(userId, UserName, loc))
+						if(MailClass.sendEmailWithAttachments(userId, UserName, loc))
 						{
 							System.out.println("VOILLAAAAAAAAAA");
 						}

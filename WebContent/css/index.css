@@ -27,7 +27,7 @@ hr
 	display: block;
 	margin-bottom: 50px;
 }
-.label, .inputs
+.label, .inputs, #gmail
 {
 	font-family: inherit;
 	display: block;
@@ -39,7 +39,7 @@ hr
 	font-weight: 600;
 
 }
-.inputs
+.inputs, #gmail
 {
 	background-color: rgba(86,164,246,0.2);
 	border: 0px solid white;
@@ -149,4 +149,35 @@ hr
 .errorData
 {
 	text-align: center;
+}
+#forgotPassword, #backToLogin,#backToLoginPage, #sendCode, #changePass
+{
+	display: inline-block;
+	font-family: inherit;
+	font-weight: 400;
+	font-size: 20px;
+	margin-top: 15px;
+	padding: 10px;
+	color: white;
+	background-color: rgb(86,164,246);
+	cursor: pointer;
+	border: 0px solid white;
+	border-radius: 5px;
+}
+#confirm
+{
+	display: block;
+	text-align: center;
+}
+.forgotPasswordDiv
+{
+	display: none;
+}
+#backToLogin, #backToLoginPage
+{
+	float: right;
+}
+.forgotPasswordTwo
+{
+	display: none;
 }

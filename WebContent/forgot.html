@@ -1,0 +1,27 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="css/forgot.css">
+</head>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+   <script type="text/javascript">
+  	function show(){
+   		document.getElementById("hideForm").style.display="block";
+   		document.getElementById("showForm").style.display="none";   
+	}	 
+   </script>
+ <body>
+	<form id="showForm">
+		<label id="confirm">Enter your gmail id to send confirmation code</label> <input type="text" id="gmail" placeholder="Enter your gmail id">
+		<input type="button" id="sendCode" value="submit" onclick="show()"> 
+	</form>
+	<form id="hideForm" style="display:none">
+		<div id="hideDiv">
+			<p id="checkMail">Check your mail for confirmation code</p>
+			<input type="password" id="inPass" placeholder="Enter confirmation password">
+			<input type="password" id="inNewPass" placeholder="Enter New Password"> 
+			<input type="password" id="inRenewpass" placeholder="Re-enter New Password"> 
+			<input type="submit" id="changePass"> 
+		</div>
+	</form>
+</body>
+</html>
