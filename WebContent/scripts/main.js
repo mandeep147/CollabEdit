@@ -1,4 +1,6 @@
 var webSocket;
+var indentVar;
+var checkIndent=0;
 var messages = [];
 var index=-1;
 //var link = "ws" + document.URL.substring(4, document.URL.length) ;
@@ -37,6 +39,7 @@ $.ajax({
 //			alert("adding to teaxtarea data: "+data);
 			if(data['data']!=undefined)
 			{
+				indentVar = 'prev';
 	//			alert("in the IF condition: adding this: "+data['data']);
 				cm.setValue(data['data']);
 			}
@@ -140,18 +143,16 @@ $('#logoutButton').click(function()
 
 $('#mailButton').click(function()
 {
-	$('#mailDiv').css("display", "");
-	$('#mailDiv').html("");
-	$('#mailDiv').append("<input type='email' id='emailTo' placeholder='Enter E-mail ID ' required>");
-	$('#mailDiv').append("<br><input type='button' id='sendMail' onclick='sendMail()'value='Send'>");
-	$('#mailDiv').append("<input type='button' id='backButton' onclick='getBack() 'value='Back'>");
-	$('#mailDiv').slideToggle(1000);
+	$('.noticeText').html("");
+	$('.noticeText').append("<input type='email' id='emailTo' placeholder='Enter E-mail ID ' required>");
+	$('.noticeText').append("<div class='noticeButtonsDiv'><input type='button' id='sendMail' onclick='sendMail()'value='Send'> <input type='button' id='backButton' onclick='getBack() 'value='Back'></div>");
+	$('.noticeForOldData').slideToggle(1000);
 	
+	//alert("here111");
 	//Back Click Event
 	$('#backButton').click(function(event)
 	{
-		$('#mailDiv').slideToggle(1000);
-//		$('#mailDiv').css("display", "none");
+		$('.noticeForOldData').slideToggle(1000);
 	});
 	
 	//Send Email
@@ -165,14 +166,22 @@ $('#mailButton').click(function()
 			type: "POST",
 			url: "/CollabEdit/Mail",
 			success: function(data){
-				alert("data sent");
+				//alert("data sent");
 			},
 			error: function(data){
-				alert("error aata");
+				//alert("error aata");
 			} 
 			
-		}).done(function(data,status){
-			alert("got the response");
+		}).done(function(data,status)
+		{
+			$('.noticeText').html("");
+			$('.noticeText').append("<div class='errorData'>Mail Sent</div>");
+			$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+			$('.noticeForOldData').slideToggle(500);
+			$('.goBack').click(function(event)
+			{
+				$('.noticeForOldData').slideToggle(500);
+			});
 		});
 	});
 	
@@ -209,7 +218,7 @@ require([ 'dojo/on' ], function(on) {
 		{
 		//	alert("in the response");
 			data[response] = response.valueOf();
-			response = undefined;
+				response = undefined;
 		}
 		console.log("-------------------------");
 		console.log("sending this: "+JSON.stringify(data));
@@ -332,20 +341,59 @@ function writeResponse(json){
     }
     else if(data!=undefined&&line!=undefined&&char!=undefined)
     {
-    	if(response['action']=='+delete')
-    		deleteAtCursor(cm,data[0],line,char);
+    	if(data[0]=='}')
+    	{
+    		closingBracs(cm, data[0], line, char);
+    	}
+    	else if(response['action']=='+delete')
+    			deleteAtCursor(cm,data[0],line,char);
     	else if (response['action']=='+input')
-    		insertAtCursor(cm,data[0],line,char);
+    	{
+    		if(data.length>1)
+    		{
+    			insertEnterCursor(cm, "\n", line, char);
+    		}
+    		else if(data[0].length>0)
+    			insertAtCursor(cm,data[0],line,char);
+    	}
+    	//indentAll(cm);
     }
    }
 
-function deleteAtCursor(instance, text,line,char) {
+function closingBracs(instance, text,line,char)
+{
 	response = 'response';
-//	console.log("ressssssssspooooooonnnnnnnnnnnssssssssssseeeeee: "+response);
-	//alert("in delete");
+	console.log("ressssssssspooooooonnnnnnnnnnnssssssssssseeeeee: "+response);
 	var prev = instance.getCursor();
 	instance.setCursor({line: line , ch : char });
-	instance.delWordAfter();
+	instance.replaceSelection(text);
+
+	cm.operation(function(){
+		cm.indentLine(line,'smart');
+	});
+	
+	instance.setCursor(prev.line,  prev.ch);
+	instance.focus();
+	
+	alert('end of }');
+}
+
+function deleteAtCursor(instance, text,line,char) {
+	response = 'response';
+	console.log("ressssssssspooooooonnnnnnnnnnnssssssssssseeeeee: "+response);
+	//alert("in delete");
+
+	var data = cm.getLine(line);
+	var newData = data.substring(0,char)+data.substring(char+1,data.length);
+	
+	var saaraData = cm.getValue();
+	
+	var arr = saaraData.split(data);
+	
+	var finalData = arr[0]+newData+arr[1];
+		
+	cm.setValue(finalData);
+	
 	instance.setCursor(prev.line,  prev.ch);
 	instance.focus();	
 	}
@@ -354,19 +402,29 @@ function insertAtCursor(instance, text,line,char) {
 	console.log("ressssssssspooooooonnnnnnnnnnnssssssssssseeeeee: "+response);
 	var prev = instance.getCursor();
 	instance.setCursor({line: line , ch : char });
-	
 	instance.replaceSelection(text);
+	/*if(enteraaya==2)
+	{
+		
+	}
+	if(enteraaya>=1)
+	{
+		enteraaya++;
+	}	*/
+	
 	instance.setCursor(prev.line,  prev.ch);
 	instance.focus();
 	
 	}
-/*
-this.send = function (message, callback) {
-    this.waitForConnection(function () {
-    	alert("waiting i m");
-    	webSocket.send(firstMessage);
-        if (typeof callback !== 'undefined') {
-          callback();
-        }
-    }, 1000);
-};*/
+function insertEnterCursor(instance, text,line,char) 
+{
+	response = 'response';
+	console.log("ressssssssspooooooonnnnnnnnnnnssssssssssseeeeee: "+response);
+	var prev = instance.getCursor();
+	instance.setCursor({line: line , ch : char });
+	instance.replaceSelection(text);
+	var temp = instance.getCursor();
+	instance.setCursor(prev.line,  prev.ch);
+	instance.focus();
+	enteraaya = 1;
+	}

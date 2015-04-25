@@ -461,7 +461,7 @@ public class Authentication
     }
     
     //This method will get the name of All the users, and create a JSOn and den send it.
-    public static String getUsers()
+    public static String getUsers(String userID)
     {
 	    Connection con;
 	    Statement stmt;
@@ -481,8 +481,14 @@ public class Authentication
 			int i=1;
 			while(rs.next())
 			{
-				json.put("email"+i, rs.getString("UserId"));
-				i++;
+				String temp = rs.getString("UserId");
+				System.out.println("comparing: temp: "+temp+"  and UserId: "+userID);
+				if(!temp.equals(userID))
+				{
+					json.put("email"+i, temp);
+					i++;
+				}
+
 			}
 			
 	    }
