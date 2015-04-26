@@ -429,7 +429,7 @@ public class Authentication
 		return true;
     }
     
-    static String getCollabData(String username, String file) throws Exception
+    static JSONObject getCollabData(String username, String file) throws Exception
     {
 	    Connection con;
 	    Statement stmt;
@@ -451,7 +451,7 @@ public class Authentication
 			
 			JSONObject json = new JSONObject();
 			json.put("data", temp);
-			return json.toString();
+			return json;
 	    }
 	    catch(Exception e)
 	    {

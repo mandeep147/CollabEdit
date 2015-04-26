@@ -3,10 +3,10 @@
 <html>
 
 <head>
-<title>main.jsp Loaded</title>
+<title>Editor</title>
 <script
 	src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
+	
 </head>
 <link rel="stylesheet"
 	href="../CollabEdit/CodeMirror/lib/codemirror.css">
@@ -167,7 +167,7 @@ html,body {
 
 	<script src="../CollabEdit/scripts/DisplayShared.js"></script>
 	<script src="../CollabEdit/CodeMirror/lib/codemirror.js"></script>
-	<script src="../CollabEdit/CodeMirror/mode/javascript/javascript.js"></script>
+	 <script src="../CollabEdit/CodeMirror/mode/javascript/javascript.js"></script> 
 	<script src="../CollabEdit/dojo/dojo.js" data-dojo-config="async:true"></script>
 	<form>
 		<textarea id='myTextArea'>
@@ -191,8 +191,8 @@ html,body {
 			<div class="noticeText"></div>
 		</div>
 	</div>
-
-	<script>
+	
+		<script> 
 		var cm = CodeMirror.fromTextArea(myTextArea, {
 			lineNumbers : true,
 			theme : "mbo",

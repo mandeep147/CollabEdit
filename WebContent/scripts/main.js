@@ -1,4 +1,5 @@
 var webSocket;
+
 var indentVar;
 var checkIndent=0;
 var messages = [];
@@ -26,26 +27,6 @@ function savedBool()
 	}
 }
 
-//for getting the data to add to CCdoemirror
-$.ajax({
-			url: '/CollabEdit/CollabData',
-			type: 'POST',
-			async : false,
-			success: function(data){
-				//alert("askking from db successfull");
-			}
-		})
-		.done(function(data,status) {
-//			alert("adding to teaxtarea data: "+data);
-			if(data['data']!=undefined)
-			{
-				indentVar = 'prev';
-	//			alert("in the IF condition: adding this: "+data['data']);
-				cm.setValue(data['data']);
-			}
-		/*	else
-				alert("FAILS IF condition: adding this: "+data['data']+ "full json: "+data);*/
-	});
 
 
 $.ajax({
@@ -66,6 +47,28 @@ $.ajax({
                 "file" : data['fileName']
             };
     });
+
+
+//for getting the data to add to CCdoemirror
+$.ajax({
+			url: '/CollabEdit/CollabData',
+			type: 'POST',
+			async : false,
+			success: function(data){
+				//alert("askking from db successfull");
+			}
+		})
+		.done(function(data,status) {
+//			alert("adding to teaxtarea data: "+data);
+			if(data['data']!=undefined)
+			{
+				indentVar = 'prev';
+	//			alert("in the IF condition: adding this: "+data['data']);
+				cm.setValue(data['data']);
+			}
+		/*	else
+				alert("FAILS IF condition: adding this: "+data['data']+ "full json: "+data);*/
+	});
 
 
 //this will get the users with whom this file is being shared

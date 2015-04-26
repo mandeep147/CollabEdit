@@ -14,16 +14,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Servlet implementation class CollabData
+ * Servlet implementation class FileType
  */
-@WebServlet("/CollabData")
-public class CollabData extends HttpServlet {
+@WebServlet("/FileType")
+public class FileType extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CollabData() {
+    public FileType() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -43,39 +43,55 @@ public class CollabData extends HttpServlet {
 		HttpSession session = request.getSession(true);	    
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
-		String json=null;
+
 		JSONObject mainJson = null;
 		String file =null;
+		String json=null;
 		try
 		{
 			String username = session.getAttribute("LoggedInUserEmail").toString();
 			file =  session.getAttribute("CurrentFile").toString();
-			
-			mainJson = Authentication.getInstance().getCollabData(username, file);
-			System.out.println("----in CollabDATA--------------------");
-			System.out.println("username: "+username+" file: "+file+" json: "+json);
+			mainJson.put("file", getFileType(file));
 //			mainJson.put("file", getFileType(file));
 			json = mainJson.toString();
 		}catch(Exception e)
 		{
-			JSONObject obj = new JSONObject();
-			try {
-				obj.put("null", "null");
-			} catch (JSONException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			json = obj.toString();
-			System.out.println("Exception in CollabDData servlet: "+e);
+			System.out.println("Exception in FileType servlet: "+e);
 		}
 		finally
 		{
 
-			System.out.println("CollabData: json: "+json);
+			System.out.println("FileType: json: "+json);
 			out.write(json);
 		    out.close();
 		}
 
 	}
+
+	
+
+    //getting the type of the file
+    String getFileType(String file)
+    {
+    	int typeInt = Integer.parseInt(file.substring(file.length()-1,file.length()));
+		
+    	String type ="";
+		switch(typeInt)
+		{
+			case 1: type = ".c";break;
+			case 2: type =".cpp";break;
+			case 3:type = ".java";break;
+			case 4:type =".js";break;
+			case 5:type =".html";break;
+			case 6:type =".jsp";break;
+			case 7:type =".css";break;
+			case 8:type =".rb";break;
+			case 9:type =".vb";break;
+			case 10:type =".asp";break;
+			case 11:type =".pl";break;
+			case 12:type =".php";break;
+		}
+		return type;
+    }
 
 }
