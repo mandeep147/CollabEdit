@@ -1,21 +1,19 @@
+var from ;
 var webSocket;
-
-var indentVar;
-var checkIndent=0;
 var messages = [];
 var index=-1;
-//var link = "ws" + document.URL.substring(4, document.URL.length) ;
-var link = "http://localhost:8080/CollabEdit/Document/kk424796576E-FEDD-E411-829A-F82FA8BE8622";
 var firstMessage;
 var to=[];
 var path = document.URL;
-var array = path.split("/");
-var temp = array[array.length - 1];
-var link2 = temp.substring(temp.length - 36, temp.length);
 var ans;
 var response;
 
 savedBool();
+
+/*
+ * When save button is pressed, page refreshes, then in order to display the
+ * prompt, savedBool is used
+ */ 
 
 function savedBool()
 {
@@ -23,12 +21,20 @@ function savedBool()
 	var check = path.split("?");
 	if(check!=path)
 	{
-		alert('Data saved');
+		$('.noticeText').html("");
+		$('.noticeText').append("<div class='errorData'>Data saved</div>");
+		$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+		$('.noticeForOldData').slideToggle(500);
+		$('.goBack').click(function(event)
+		{
+			$('.noticeForOldData').slideToggle(500);
+		});
+
 	}
 }
 
 
-
+//Getting the loggedInUserNAme and FileName from the server
 $.ajax({
     method : "POST",
     async : false,
@@ -49,88 +55,52 @@ $.ajax({
     });
 
 
-//for getting the data to add to CCdoemirror
+//for getting the data from the DB inorder to add to Codemirror
 $.ajax({
 			url: '/CollabEdit/CollabData',
 			type: 'POST',
-			async : false,
-			success: function(data){
-				//alert("askking from db successfull");
-			}
+			async : false
 		})
 		.done(function(data,status) {
-//			alert("adding to teaxtarea data: "+data);
 			if(data['data']!=undefined)
 			{
-				indentVar = 'prev';
-	//			alert("in the IF condition: adding this: "+data['data']);
 				cm.setValue(data['data']);
 			}
-		/*	else
-				alert("FAILS IF condition: adding this: "+data['data']+ "full json: "+data);*/
-	});
+		});
 
 
 //this will get the users with whom this file is being shared
 $.ajax({
     method : "POST",
     async : false,
-    url : "/CollabEdit/DisplaySEmails",
-    data: {"url": link2},
-    success : function(data) {
-    	//alert("data to DSE sent success");
-        console.log("data sent successfully: ",data);
-    },
-    error : function(data) {
-    	//alert("NOOOOOOOOOOOOOOO data to DSE sent success");
-        console.log("Unsuccessful transmission in MAIN.JS-----------------" + data);
-    }}).done(
+    url : "/CollabEdit/DisplaySEmails"
+    }).done(
         function(data) {
-        	//alert("data to DSE sent success RESPOSE: "+data);
-        	//alert("asli data: "+(JSON.stringify(data)));
-        	//alert("in data function");
-        	console.log("-------------------------------------");
-        	console.log("in data function");
         	to = data;
-//            ans = to; //JSON.stringify(to);
     });
+
+//Saving the changes to the Database
+/*
+ * Getting the data form codemirror 
+ * sending it to OTServer.java
+ */
 function saveChanges()
 {
 	
 	var json = { 
-					'CodeFromEditor': cm.getValue(),
-					'file' : file,
-					'from' : from
+				'CodeFromEditor': cm.getValue(),
+				'file' : file,
+				'from' : from
 				};
 	for(var i  in to)
 	{
-//		alert("value of i: "+i);
 		json[i.valueOf()] = to[i];
 	}
-
-	console.log("-----saving-- this: ", json);
-	//alert("data: "+json);
 	this.send(json);
-/* 		$.ajax({
-		url:s '/TryKrRahaHu/SaveData',
-		method : "POST",
-		data: json
-	}).done(function(data,status) {
-			var res = data['result'];
-			if(res=='success')
-			{
-				alert('done');	
-			}
-			else
-			{
-				alert('panga');	
-			}
-		})
-*/	}
+	}
 
 $('#logoutButton').click(function()
 {
-	/*alert("logout wala");*/
 	$.ajax({
 		url: '/CollabEdit/Logout',
 		method : "POST",
@@ -139,11 +109,11 @@ $('#logoutButton').click(function()
 			"logout": "logout"
 		}
 	}).done(function(data,status) {
-		console.log('back from server');
 		window.location.assign("index.html");
-		});
+	});
 });
 
+//mailButton click function
 $('#mailButton').click(function()
 {
 	$('.noticeText').html("");
@@ -151,8 +121,6 @@ $('#mailButton').click(function()
 	$('.noticeText').append("<div class='noticeButtonsDiv'><input type='button' id='sendMail' onclick='sendMail()'value='Send'> <input type='button' id='backButton' onclick='getBack() 'value='Back'></div>");
 	$('.noticeForOldData').slideToggle(1000);
 	
-	//alert("here111");
-	//Back Click Event
 	$('#backButton').click(function(event)
 	{
 		$('.noticeForOldData').slideToggle(1000);
@@ -167,41 +135,43 @@ $('#mailButton').click(function()
 				data: userId
 			},
 			type: "POST",
-			url: "/CollabEdit/Mail",
-			success: function(data){
-				//alert("data sent");
-			},
-			error: function(data){
-				//alert("error aata");
-			} 
-			
+			url: "/CollabEdit/MailServlet"			
 		}).done(function(data,status)
 		{
-			$('.noticeText').html("");
-			$('.noticeText').append("<div class='errorData'>Mail Sent</div>");
-			$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
-			$('.noticeForOldData').slideToggle(500);
-			$('.goBack').click(function(event)
+			if(data['result']=='success')
 			{
+				$('.noticeText').html("");
+				$('.noticeText').append("<div class='errorData'>Mail Sent</div>");
+				$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
 				$('.noticeForOldData').slideToggle(500);
-			});
+				$('.goBack').click(function(event)
+				{
+					$('.noticeForOldData').slideToggle(500);
+				});
+			}
+			else
+			{
+				$('.noticeText').html("");
+				$('.noticeText').append("<div class='errorData'>Mail Did not Sent, Check the E-mail ID and try again</div>");
+				$('.noticeText').append("<br><input type='button' value='Back' class='goBack'>");
+				$('.noticeForOldData').slideToggle(500);
+				$('.goBack').click(function(event)
+				{
+					$('.noticeForOldData').slideToggle(500);
+				});			
+			}
 		});
 	});
 	
 });
 
-
+//OnChange Method of CodeMirror
 require([ 'dojo/on' ], function(on) {
 	cm.on('change', function(arg1, arg2) {
 		actionToPerform = arg2.origin;
-		console.log("typde dekh: ", typeof actionToPerform);
 		lineLocation = arg2.from.line;
 		charLocation = arg2.from.ch;
 		data1 = arg2.text;
-		console.log("Action: ", actionToPerform, " Data: ", data, " line: ",
-				lineLocation, " charLocation: ", charLocation);
-		console.log("Location: " + window.location.href);
-		
 		var data = {
 				"file" : file,
 				"from" : from,
@@ -210,49 +180,39 @@ require([ 'dojo/on' ], function(on) {
 				"lineLocation" : lineLocation ,
 				"charLocation" :  charLocation 
 			}
-		//alert("to: "+to);
-		//alert("check to: "+JSON.stringify(to));
 		for(var i  in to)
 		{
-			//alert("value of i: "+i);
 			data[i.valueOf()] = to[i];
 		}
 		if(response!=undefined)
 		{
-		//	alert("in the response");
 			data[response] = response.valueOf();
 				response = undefined;
 		}
-		console.log("-------------------------");
-		console.log("sending this: "+JSON.stringify(data));
 		this.send(data);
-		
 	});
 });
 
-var from ;
+
 
 
 //calling the openSocket
-openSocket(link);
+openSocket();
 
-console.log("before sending first messgae: "+firstMessage);
-//alert("before sending first messgae: "+firstMessage['from']);
+//FirstMessage: from, to
 this.send(firstMessage);
-//alert("first msg sent");
 
+//WebSocket functions
 
-
-function openSocket(link){
+function openSocket(){
     // Ensures only one connection is open at a time
     if(webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED){
         //writeResponse("WebSocket is already opened.");
         return;
     }
     // Create a new instance of the websocket
-    console.log("LINK ISSSSSSSSSSS" + link);
-
     webSocket = new WebSocket("ws://192.168.1.103:8080/CollabEdit/main");
+    
     /**
      * Binds functions to the listeners for the websocket.
      */
@@ -260,17 +220,16 @@ function openSocket(link){
     webSocket.onopen = function(event){
         if(event.data === undefined)
             return;
-		//alert("onOpen executed");
         writeResponse(event.data);
     };
 
     
+    //Sending the message to the Server
     
     this.send = function (message, callback) {
         this.waitForConnection(function () {
         	
         	var json = JSON.stringify(message);
-        	//alert("trying to send this: "+json);
             webSocket.send(json);
             if (typeof callback !== 'undefined') {
               callback();
@@ -278,6 +237,10 @@ function openSocket(link){
         }, 1000);
     };
 
+    /*
+     * 	If a connection is not created instantly, then it will 
+     *	keep trying until connection is created
+     */
     this.waitForConnection = function (callback, interval) {
         if (webSocket.readyState === 1) {
             callback();
@@ -305,44 +268,19 @@ function openSocket(link){
  * Sends the value of the text input to the server
  */
 
-//Data is to SEND hona h 
-function sendText(data){
-	
-	console.log("-------------in the SENDTEXT--------------");
-	console.log("typeof data: ",typeof data);
-    var json = JSON.stringify(data);
- //   alert("sending noww data: "+json);
-    console.log("typeof json: ",typeof json," and data is: ",json);
-    console.log("-------------in the SENDTEXT--------------");
-    webSocket.send(json);
-}
-
 function closeSocket(){
     webSocket.close();
 }
 
-///jado response aaega MEANS jab data aaega
+
 function writeResponse(json){
     var response = JSON.parse(json);
-  //  alert("Receieve data from other USER: "+response);
-    console.log("??????????????????????stringify; "+JSON.stringify(response));
-    console.log("response dkeh zra: "+response);
     
     var line = response['lineLocation'];
-    console.log("typeof line: "+typeof line);
-    
     var char = response['charLocation'];
-    console.log("typeof char: "+typeof char);
-     
     var data =  response['data'];
-    console.log("typeof data: "+typeof data);
-    
     var save = response['CodeFromEditor'];
-    if(save!=undefined)
-    {
-    	//alert("data saved");
-    }
-    else if(data!=undefined&&line!=undefined&&char!=undefined)
+    if(data!=undefined&&line!=undefined&&char!=undefined)
     {
     	if(data[0]=='}')
     	{
@@ -359,14 +297,13 @@ function writeResponse(json){
     		else if(data[0].length>0)
     			insertAtCursor(cm,data[0],line,char);
     	}
-    	//indentAll(cm);
     }
    }
 
+//Closing Bracs results in Indentation
 function closingBracs(instance, text,line,char)
 {
 	response = 'response';
-	console.log("ressssssssspooooooonnnnnnnnnnnssssssssssseeeeee: "+response);
 	var prev = instance.getCursor();
 	instance.setCursor({line: line , ch : char });
 	instance.replaceSelection(text);
@@ -377,57 +314,47 @@ function closingBracs(instance, text,line,char)
 	
 	instance.setCursor(prev.line,  prev.ch);
 	instance.focus();
-	
-	alert('end of }');
 }
 
+//Delete method
 function deleteAtCursor(instance, text,line,char) {
 	response = 'response';
-	console.log("ressssssssspooooooonnnnnnnnnnnssssssssssseeeeee: "+response);
-	//alert("in delete");
-
+	var prev = instance.getCursor();
 	var data = cm.getLine(line);
-	var newData = data.substring(0,char)+data.substring(char+1,data.length);
-	
-	var saaraData = cm.getValue();
-	
-	var arr = saaraData.split(data);
-	
-	var finalData = arr[0]+newData+arr[1];
+	if(data.length>0)
+	{
+		var newLine = data.substring(0,char)+data.substring(char+1,data.length);
+		var finalData = cm.getValue();
 		
-	cm.setValue(finalData);
-	
+		var arr = finalData.split(data);
+		
+		var finalData = arr[0]+newLine+arr[1];
+			
+		cm.setValue(finalData);
+		
+		instance.setCursor(prev.line,  prev.ch);
+		instance.focus();	
+
+	}
+}
+
+//insert method
+function insertAtCursor(instance, text,line,char) {
+	response = 'response';
+	var prev = instance.getCursor();
+	instance.setCursor({line: line , ch : char });
+	instance.replaceSelection(text);
 	instance.setCursor(prev.line,  prev.ch);
 	instance.focus();	
 	}
-function insertAtCursor(instance, text,line,char) {
-	response = 'response';
-	console.log("ressssssssspooooooonnnnnnnnnnnssssssssssseeeeee: "+response);
-	var prev = instance.getCursor();
-	instance.setCursor({line: line , ch : char });
-	instance.replaceSelection(text);
-	/*if(enteraaya==2)
-	{
-		
-	}
-	if(enteraaya>=1)
-	{
-		enteraaya++;
-	}	*/
-	
-	instance.setCursor(prev.line,  prev.ch);
-	instance.focus();
-	
-	}
+
+//whenever Enter is pressed, "" is sent as a change by ccodemirro
 function insertEnterCursor(instance, text,line,char) 
 {
 	response = 'response';
-	console.log("ressssssssspooooooonnnnnnnnnnnssssssssssseeeeee: "+response);
 	var prev = instance.getCursor();
 	instance.setCursor({line: line , ch : char });
 	instance.replaceSelection(text);
-	var temp = instance.getCursor();
 	instance.setCursor(prev.line,  prev.ch);
 	instance.focus();
-	enteraaya = 1;
 	}

@@ -32,6 +32,8 @@ public class GeneratREmail extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * Generation of the Random Pass Code
+	 * Mailing this, to the Email id
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
@@ -41,11 +43,8 @@ public class GeneratREmail extends HttpServlet {
 		JSONObject json = new JSONObject();
 		HttpSession session = request.getSession(true);
 		
-		System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5");
-		System.out.println("mailID: "+mailId+"   randomPAss: "+randomPassword);
 		if(MailClass.sendEmail(mailId, randomPassword))
 		{
-			System.out.println("MAIL SENTTTTTTTTTTTT");
 			session.setAttribute("passCode", randomPassword);
 			try
 			{

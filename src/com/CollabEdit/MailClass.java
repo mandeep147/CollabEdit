@@ -136,18 +136,14 @@ public class MailClass {
 	        Multipart multipart = new MimeMultipart();
 	        multipart.addBodyPart(messageBodyPart);
 	 
-	        // adds attachments
-	         
-	        // sets the multi-part as e-mail's content
 	        msg.setContent(multipart);
 	 
 	        // sends the e-mail
 	        Transport.send(msg);
-
+	        System.out.println("MAil Sent..!!");
 		} 
         catch (Exception e) 
         {
-        	System.out.println("in the MAilClass-- ");
 			e.printStackTrace();
         	return false;
 		}

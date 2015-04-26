@@ -23,17 +23,16 @@ public class Logout extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
+    //Session is destroyed and page is redirected to index.html
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String value = request.getParameter("logout");
 		HttpSession session = request.getSession(false);
 		if(value.equals("logout"))
 		{
-			
-			System.out.println("&&&&&&&&IN SIDE LOGOUT&&&&&&&&&&&&&");
 			if(session!=null)
 				session.invalidate();
-			 return; // <--- Here.
+			 return; 
 		}
 	}
 

@@ -26,32 +26,28 @@ public class getPrevData extends HttpServlet {
     }
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * This will get All the files which are linked with the LoggedInUser
+	 * Called during: create_file.jsp
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		HttpSession session = request.getSession(true);
-		System.out.println("ok till here");
 		try
 		{
 			String username = session.getAttribute("LoggedInUserEmail").toString();
 			if(username!=null)
 			{
-				String json = Authentication.getInstance().getAlreadyFileLinks(username);
+				String json = DatabaseClass.getInstance().getAlreadyFileLinks(username);
 				PrintWriter out = response.getWriter();
 			    response.setContentType("application/json");
 			    System.out.println("sending as a response this: "+json);
 			    out.write(json);
 			    out.close();
 			}
-			else
-			{
-				System.out.println("SESSION NOT FOUND..!!!");
-			}
-
 		}
 		catch(Exception e)
 		{
-			
+			System.out.println(e);
 		}
 	}
 

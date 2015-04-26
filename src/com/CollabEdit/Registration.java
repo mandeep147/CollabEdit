@@ -3,7 +3,6 @@ package com.CollabEdit;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +16,9 @@ import org.json.JSONObject;
 public class Registration extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
+	/*
+	 * Registration Servlet
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
 		PrintWriter out = response.getWriter();
@@ -29,7 +31,7 @@ public class Registration extends HttpServlet {
 		JSONObject json = new JSONObject();
 		try
 		{
-			String returnedValue =Authentication.getInstance().createUserCredentials(uname, email, pass); 
+			String returnedValue =DatabaseClass.getInstance().createUserCredentials(uname, email, pass); 
 			if(returnedValue.equals("success"))
 			{
 				json.put("response" , "success");

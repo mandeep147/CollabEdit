@@ -34,21 +34,16 @@ public class UsersDb extends HttpServlet {
 		try
 		{
 			String userID = session.getAttribute("LoggedInUserEmail").toString();
-			System.out.println("DO NOT INCLUDE THIS: "+userID);
-			String json = Authentication.getInstance().getUsers(userID);
+			String json = DatabaseClass.getInstance().getUsers(userID);
 			PrintWriter out = response.getWriter();
 			 
 			response.setContentType("application/json");
-		    System.out.println("sending as a response this DisplaySEmails: "+json);
 		    out.write(json);
 		    out.close();
 		}
 		catch(Exception e)
 		{
-			
+			System.out.println(e);
 		}
-
-		
 	}
-
 }

@@ -28,6 +28,8 @@ public class Forgot extends HttpServlet {
     }
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * Checking whether the User, who have clicked Forgot passwrd, actually have 
+	 * a account or not
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
@@ -37,7 +39,7 @@ public class Forgot extends HttpServlet {
 		
 		try
 		{
-			if(Authentication.getInstance().checkEmail(userId))
+			if(DatabaseClass.getInstance().checkEmail(userId))
 			{
 				json.put("result", "success");
 			}
@@ -58,12 +60,8 @@ public class Forgot extends HttpServlet {
 		finally{
 			PrintWriter out = response.getWriter();
 			response.setContentType("application/json");
-		    System.out.println("sending as a response this DisplaySEmails: "+json);
 		    out.write(json.toString());
 		    out.close();
-
 		}
- 
 	}
-
 }

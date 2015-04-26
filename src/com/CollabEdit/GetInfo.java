@@ -1,7 +1,5 @@
 package com.CollabEdit;
 
-
-
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -36,32 +34,21 @@ public class GetInfo extends HttpServlet {
 		// TODO Auto-generated method stub
 		
 		PrintWriter out = response.getWriter();
-		System.out.println("DO POST STARTED IN GET INFO");
 
 		//getting the session
 		HttpSession session = request.getSession(true);
-		System.out.println("session get");
 		String username = (String)session.getAttribute("LoggedInUserEmail");
 		String fileName = (String)session.getAttribute("CurrentFile");
-
-		System.out.println("INGETINFO " + username);
-		
-		
 		obj = new JSONObject();
-		
 		//if session exists then
 		if(username!=null&&fileName!=null)
 		{
 			try
 			{
-				System.out.println("IN TRY");
-				
 				obj.put("email", username);
 				obj.put("fileName", fileName);
 
-				System.out.println("OBJECT PUT");
 			    response.setContentType("application/json");
-			    System.out.println("GETINFPPPOOOOOsending as a response this: "+ obj);
 			    out.write(obj.toString());
 			    out.close();
 			}

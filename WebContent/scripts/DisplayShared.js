@@ -1,8 +1,7 @@
 /*
  * This will send the ajax request to the server
- * in order to retrieve the FileNames which are
- * either created by the LoggedIn user or those which
- * have been shared with. 
+ * in order to retrieve the Person (e-mail ID) with 
+ * whom this file has been shared
  */
 $.ajax({
 	method : "POST",

@@ -28,18 +28,11 @@ public class DisplaySEmails extends HttpServlet {
     }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-	}
-
-	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * Servlet will get the email-id of that person with whom the Current file 
+	 * of loggedInUser is being shared
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		System.out.println("------in the Display wala Servlet---------");
 
 		//Using Sessions in order to get USerID and FileName in order to get the SharedWith ppl
 		
@@ -47,20 +40,12 @@ public class DisplaySEmails extends HttpServlet {
 		Object username = session.getAttribute("LoggedInUserEmail");
 		Object filename = session.getAttribute("CurrentFile");
 		
-		if(username==null||filename==null)
+		if(username!=null&&filename!=null)
 		{
-			if(username==null)
-				System.out.println("########PRoblem in CURRENT FILE #################USERNAME");
-			else
-				System.out.println("########PRoblem in CURRENT FILE #################FILEEE");
-		}
-		else
-		{
-			String json = Authentication.getInstance().getSharedUsingUID(username.toString(),filename.toString());
+			String json = DatabaseClass.getInstance().getSharedUsingUID(username.toString(),filename.toString());
 			PrintWriter out = response.getWriter();
 		 
 			response.setContentType("application/json");
-		    System.out.println("sending as a response this DisplaySEmails: "+json);
 		    out.write(json);
 		    out.close();
 		}

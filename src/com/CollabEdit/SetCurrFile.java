@@ -24,25 +24,16 @@ public class SetCurrFile extends HttpServlet {
     }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-	}
-
-	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * This set the name of the Current working file in the session
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
-		System.out.println("-------------------Working in SETCURRFILE-----------------------");
 		String filename = request.getParameter("fileName");
 		HttpSession session = request.getSession();
-		System.out.println("filename dekh zra: "+filename);
+
 		session.setAttribute("CurrentFile", filename);
 		session.setMaxInactiveInterval(30*60);
-		
 	}
 
 }

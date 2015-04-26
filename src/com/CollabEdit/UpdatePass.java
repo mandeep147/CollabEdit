@@ -30,6 +30,7 @@ public class UpdatePass extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * Updating Password
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
@@ -45,7 +46,7 @@ public class UpdatePass extends HttpServlet {
 				String checkPasswordRegex = "^.+?(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[#$%^&*@]).{8,}$";
 				if(password.matches(checkPasswordRegex))
 				{
-					if(Authentication.getInstance().updatePassword(request.getParameter("userId"), password))
+					if(DatabaseClass.getInstance().updatePassword(request.getParameter("userId"), password))
 					{
 						json.put("response","success");
 					}

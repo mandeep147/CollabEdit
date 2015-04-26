@@ -44,7 +44,7 @@ public class CollabData extends HttpServlet {
 			String username = session.getAttribute("LoggedInUserEmail").toString();
 			file =  session.getAttribute("CurrentFile").toString();
 			
-			mainJson = Authentication.getInstance().getCollabData(username, file);
+			mainJson = DatabaseClass.getInstance().getCollabData(username, file);
 			json = mainJson.toString();
 		}
 		catch(Exception e)

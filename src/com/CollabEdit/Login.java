@@ -16,24 +16,27 @@ import org.json.JSONObject;
 public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * This executes when a user Login into the System
+	 * credentials are checked
+	 * Session attributes are set 
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
 		response.setContentType("application/json");
 
-		System.out.println("in hereeeeeeeeeeeeeeee");
 		JSONObject json = new JSONObject();
 
-		//		response.setContentType("text/html");
 		String email = request.getParameter("username");
 		String pass = request.getParameter("password");
-		if(Authentication.getInstance().checkUserCredentials(email, pass))
+		if(DatabaseClass.getInstance().checkUserCredentials(email, pass))
 		{
 			HttpSession session = request.getSession();
 			session.setAttribute("LoggedInUserEmail", email);
 			session.setMaxInactiveInterval(30*60);
-			try{
+			try
+			{
 				json.put("response", "success");
-				//System.out.println("sending as a response this: "+json);
 			}
 			catch(Exception e)
 			{
@@ -50,9 +53,7 @@ public class Login extends HttpServlet {
 
 			 }
 		}
-		System.out.println("respose back is: "+json.toString());
 		out.write(json.toString());
 		out.close();
 	}
-
 }
