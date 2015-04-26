@@ -26,7 +26,7 @@ public class Login extends HttpServlet {
 		//		response.setContentType("text/html");
 		String email = request.getParameter("username");
 		String pass = request.getParameter("password");
-		if(Authentication.checkUserCredentials(email, pass))
+		if(Authentication.getInstance().checkUserCredentials(email, pass))
 		{
 			HttpSession session = request.getSession();
 			session.setAttribute("LoggedInUserEmail", email);

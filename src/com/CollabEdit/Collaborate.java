@@ -3,7 +3,6 @@ package com.CollabEdit;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -28,40 +27,34 @@ public class Collaborate extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
+    
+    /*
+     * This will executed when a new File is being created, 
+     * this will be called in order to insert data to the DB
+     * 
+     */
+    
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		//getting the session
 		HttpSession session = request.getSession();
-
 		String creatorEmail = (String) session.getAttribute("LoggedInUserEmail");
-
-		System.out.println("INCOLABORATE " + creatorEmail);
-		
 		String file = request.getParameter("nameoffile");
-		
-		System.out.println("FILENAME " + file);
-
-		String completefileName = file + request.getParameter("select1");
-		
+		String completefileName = (file + request.getParameter("select1")).toString();
 		String emailid = request.getParameter("mailofmod"); // this is the mailID of that person with whom we will share the doc.
-		
-		System.out.println("--------fukeNAMEEEE------- "+completefileName);
-		
 		PrintWriter out = response.getWriter();
 		response.setContentType("application/json");
-		
 		JSONObject json = new JSONObject();
 		try
 		{
-			String ConcatUrl  = Authentication.getInstance().CreateFile(creatorEmail,completefileName,emailid);
-			session.setAttribute("CurrentFile", completefileName); //setting the attribute
-			
-			json.put("response","success");
+			if(Authentication.getInstance().CreateFile(creatorEmail,completefileName,emailid))
+			{
+				session.setAttribute("CurrentFile", completefileName); //setting the attribute
+				json.put("response","success");
+			}
 		}
 		catch(Exception e)
 		{
-			System.out.println("aayi Exception---------------------");
-			
 			try 
 			{
 				json.put("response","fail");

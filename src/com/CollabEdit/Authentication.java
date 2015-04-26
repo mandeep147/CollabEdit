@@ -46,12 +46,15 @@ public class Authentication
 			authentication = new Authentication();
 		return authentication;
 	}
+	
+	/*
+	 * Validate the password as per constraints and then add details to DB
+	 * Executes during Registration of a new User
+	 */
 	String createUserCredentials(String uname, String email, String password) throws Exception
 	{
-        PrintWriter out;
         Connection con;
         PreparedStatement stmt;
-        boolean returnbool;
         String sql;
 		String checkEmailRegex = "^.+@.+\\.[a-z]{2,4}$";
 		String checkPasswordRegex = "^.+?(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[#$%^&*@]).{8,}$";
@@ -60,7 +63,6 @@ public class Authentication
 			
 			if(password.matches(checkPasswordRegex))
 			{
-				System.out.println("Password MATCHED");
 				try
 				{
 					Class.forName(classloading);
@@ -71,7 +73,6 @@ public class Authentication
 					stmt.setString(2, email);
 					stmt.setString(3, password);
 				   int result = stmt.executeUpdate();
-				   System.out.println(result);
 				   if(result > 0)
 				   {
 					   return "success";
@@ -84,7 +85,6 @@ public class Authentication
 				}
 				catch(Exception e)
 				{
-					System.out.println("Exception in createUserCredentials " + e);
 					return "EmailInDataBase";
 				}
 			}
@@ -100,9 +100,13 @@ public class Authentication
 			return null;
 		}
 	}
-	static boolean checkUserCredentials(String email, String password)
+	
+	/*
+	 * Checks the Email + password combination from DB  
+	 *	Executes during login
+	 */
+	Boolean checkUserCredentials(String email, String password)
     {
-        PrintWriter out;
         Connection con;
         PreparedStatement stmt;
         boolean returnbool;
@@ -117,25 +121,20 @@ public class Authentication
 			stmt.setString(2, password);
 		   ResultSet rs = stmt.executeQuery();
 		   returnbool = rs.next();
-		   System.out.println("returnbool is     " + returnbool);
-		   System.out.println("query: "+stmt);
-		   System.out.println("username: "+email+"  paswwrod: "+password);
 		   try
 		   {
-		   if(returnbool)
-		   {
-			 sql=  "Insert into dbo.LoggedInUsers(EmailId) values (?)"; 
-		    stmt =   con.prepareStatement(sql);
-		    stmt.setString(1, email);
-		    stmt.executeUpdate();
-		      
-		   }
+			   if(returnbool)
+			   {
+				 sql=  "Insert into dbo.LoggedInUsers(EmailId) values (?)"; 
+			    stmt =   con.prepareStatement(sql);
+			    stmt.setString(1, email);
+			    stmt.executeUpdate();
+			      
+			   }
 		   } catch(Exception e)
 		   {
-		   System.out.println(e);
-		   }
 		   
-		   System.out.println(returnbool);
+		   }
 		 return returnbool;
         }
         catch(SQLException sqe)
@@ -152,67 +151,7 @@ public class Authentication
       
     }
     
-    static ArrayList getOnlineModerators(String CreatedByEmailId)
-    {
-        PrintWriter out;
-        Connection con;
-        ArrayList<String> emails = new ArrayList<String>();
-        PreparedStatement stmt;
-    	int NumberOfOnlineModerators;
-    	String ArrayEmails[];
-		try
-		{
-			Class.forName(classloading);
-			con = DriverManager.getConnection(dbURL, user, Password );
-    	String sql = "select fm.EmailId As ModeratorEmails from dbo.FileCreated fc join dbo.FileModerators fm on fc.FileLink = fm.FileLink join dbo.LoggedInUsers lu on fm.EmailId = lu.EmailId";
-      stmt =  con.prepareStatement(sql);
-    	ResultSet rs = stmt.executeQuery();
-        int columnCount = rs.getMetaData().getColumnCount();
-    	
-        while (rs.next())
-        {
-            String email = rs.getString("ModeratorEmails");
-            
-           emails.add(email);
-        }
-		}
-		catch(Exception e)
-		{
-	System.out.println(e);
-		}
-		
-		
-    	return emails;
-    }
 
-
-    static String getFileLink(String createdByEmailid,  String FileName) throws Exception
-    {
-        PrintWriter out;
-        Connection con;
-        ArrayList<String> emails = new ArrayList<String>();
-        Statement stmt;
-    	String link = " ";
-    	String FinalLink= " ";
-    	String sql = "select FileLink as GeneratedLink from dbo.FileCreated fc where fc.Email = '" + createdByEmailid + "'and fc.FileName ='" +  FileName+ "'" ;
-		try
-		{
-			Class.forName(classloading);
-			con = DriverManager.getConnection(dbURL, user, Password );
-			stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-	         while(rs.next())
-	         { link = rs.getString("GeneratedLink"); }
-			FinalLink = FileName  +  link;
-		}
-		catch(Exception e)
-		{
-			System.out.println("ERROR in Auth: "+e);
-			throw e;
-		}
-		return FinalLink;
-    }
-    
     static String getAlreadyFileLinks(String username)
      {
         Connection con;
@@ -226,7 +165,7 @@ public class Authentication
 			con = DriverManager.getConnection(dbURL, user, Password );
 			stmt = con.createStatement();
 		    ResultSet result = stmt.executeQuery(sql);
-		    System.out.println("QUERY: "+sql);
+		    
 	        int i=1;
 //	        result.next();
 		    while(result.next())
@@ -237,16 +176,19 @@ public class Authentication
 		    	object.put("file"+i, name+link);
 		    	i++;
 		    }
-	        System.out.println("end JSON: "+object.toString());
+	        
         }
         catch(Exception e)
         {
-                System.out.println("Exception in GetPrev. Files");
+                
         }
         return object.toString();
     }
     
-    static String CreateFile (String creatorEmail, String fileName, String shareWith) throws Exception
+    /*
+     * When a new file is created then this method will insert the data to the DB
+     */
+    Boolean CreateFile (String creatorEmail, String fileName, String shareWith) throws Exception
     {
         Connection con;
         String link ="";
@@ -263,32 +205,28 @@ public class Authentication
 		    stmt.setString(3, sw);
 		    try
             {
-			    int result = stmt.executeUpdate();
-			    link = Authentication.getFileLink(creatorEmail, fileName);
+			    stmt.executeUpdate();
+			    return true;
             }
 		    catch(Exception e )
 		    {
-		    	System.out.println(e);
 		    	throw e;
 
 		    }
         }
         catch(Exception e)
         {
-            System.out.println(e);
-        		throw e;
-
-        }
-        return link;
-   
+    		throw e;
+        } 
     }
+    
     static String getSharedUsingUID(String username, String fileName)
     {
         Connection con;
         String link ="";
         Statement stmt = null;
         String sql = "Select ShareWith from [CollabEditDB].[dbo].[FileCreated] where ShareWith LIKE '%"+username+"%' and FileName = '"+fileName+"'";
-        System.out.println("saaadi query: "+sql);
+        
 
         JSONObject object = new JSONObject();
         try
@@ -306,17 +244,17 @@ public class Authentication
 	        StringTokenizer st = new StringTokenizer(id,",");
 	        object.put("total", st.countTokens()-1);
 	        int i=1;
-	        System.out.println("********AUTH*********************");
+	        
 	        while(st.hasMoreTokens())
 	        {
 
 	        	String temp = st.nextToken();
 	        	
-	        	System.out.println(" temp: "+temp+" username: "+username);
+	        	
 	        	
 	        	if(!temp.equals(username))
 	        	{
-	        		System.out.println("adding to json");
+	        		
 	        		object.put("email"+i, temp);
 		        	i++;
 	        	}
@@ -325,7 +263,7 @@ public class Authentication
         }
         catch(Exception e)
         {
-                System.out.println("Exception in AUTH "+e);
+                
         }
         return object.toString();
     }
@@ -337,26 +275,26 @@ public class Authentication
         Statement stmt;
         String sql = "Select ShareWith from dbo.FileCreated where FileLink = '"+fileName+"'";
         JSONObject object = new JSONObject();
-        System.out.println("---------outside AUTH-----------");
+        
         try
         {
-        	 System.out.println("1---------outside AUTH-----------");
+        	 
         	Class.forName(classloading);
-       	 System.out.println("2---------outside AUTH-----------");
+       	 
 			con = DriverManager.getConnection(dbURL, user, Password );
-       	 System.out.println("3---------outside AUTH-----------");
+       	 
 			stmt = con.createStatement();
-       	 System.out.println("4---------outside AUTH-----------");
+       	 
 		    ResultSet result = stmt.executeQuery(sql);
-       	 System.out.println("5---------outside AUTH-----------");
-		    System.out.println(result);
-	       	 System.out.println("6---------outside AUTH-----------");
-	       	 System.out.println("QUERY: "+sql);
+       	 
+		    
+	       	 
+	       	 
 		    result.next();
-	       	 System.out.println("7---------outside AUTH-----------");
+	       	 
 		    String id = result.getString("ShareWith");
-	       	 System.out.println("8---------outside AUTH-----------");
-		    System.out.println("--in Authentication---- data: "+id);
+	       	 
+		    
 		    //Generating JSON now
 	        StringTokenizer st = new StringTokenizer(id,",");
 	        
@@ -368,11 +306,11 @@ public class Authentication
 	        	i++;
 	        }
 
-	        System.out.println("end JSON: "+object.toString());
+	        
         }
         catch(Exception e)
         {
-                System.out.println("Exception in AUTH");
+                
         }
         return object.toString();
     }
@@ -383,7 +321,7 @@ public class Authentication
 	    Connection con;
 	    Statement stmt;
 	    
-	    System.out.println("in the SAVE DATAAAAAAAAAAAAAAA");
+	    
 	    String sql;
 	    try
 	    {
@@ -395,17 +333,17 @@ public class Authentication
 			
 			ResultSet rs = stmt.executeQuery(sql);
 			rs.next();
-			System.out.println("Query1: "+sql);
+			
 			String temp = rs.getString("data");
 			
 			sql = "Update [CollabEditDB].[dbo].[DataTable] set data = '"+FileData+"' where UserId = '"+userId+"' and FileName = '"+Filename+"'";
 			
 			stmt.executeUpdate(sql);
-			System.out.println("Updating Query: "+sql);
+			
 	    }
 		catch(Exception e)
 		{
-			System.out.println("Exception occured while Saving Data:"+ e);
+			
 			try
 			{
 				Class.forName(classloading);
@@ -413,7 +351,7 @@ public class Authentication
 
 				sql = "Insert into [CollabEditDB].[dbo].[DataTable](UserId, FileName, data) values ('"+userId+"','"+Filename+"','"+FileData+"')";
 				
-				System.out.println("Query2: "+sql);
+				
 				stmt = con.createStatement();
 
 				stmt.executeUpdate(sql);
@@ -421,7 +359,7 @@ public class Authentication
 			}
 			catch(Exception e1)
 			{
-				System.out.println("Exception while Inserting: "+e1);
+				
 				return false;
 			}
 			return true;
@@ -429,7 +367,12 @@ public class Authentication
 		return true;
     }
     
-    static JSONObject getCollabData(String username, String file) throws Exception
+    /*
+     * This will get the data of a particular file form the DB
+     * Called by: CollabData.java 
+     */
+    
+    JSONObject getCollabData(String username, String file) throws Exception
     {
 	    Connection con;
 	    Statement stmt;
@@ -446,7 +389,7 @@ public class Authentication
 			ResultSet rs = stmt.executeQuery(sql);
 			
 			rs.next();
-			System.out.println("Query1: "+sql);
+			
 			String temp = rs.getString("data");
 			
 			JSONObject json = new JSONObject();
@@ -455,7 +398,7 @@ public class Authentication
 	    }
 	    catch(Exception e)
 	    {
-	    	System.out.println("exception in getCollabData "+e);
+	    	
 	    	throw e;
 	    }
     }
@@ -482,7 +425,7 @@ public class Authentication
 			while(rs.next())
 			{
 				String temp = rs.getString("UserId");
-				System.out.println("comparing: temp: "+temp+"  and UserId: "+userID);
+				
 				if(!temp.equals(userID))
 				{
 					json.put("email"+i, temp);
@@ -494,7 +437,7 @@ public class Authentication
 	    }
 	    catch(Exception e)
 	    {
-	    	System.out.println("Exception in getUsers() "+e);
+	    	
 	    }
 	    return json.toString();
     }
@@ -517,11 +460,11 @@ public class Authentication
 			
 			rs.next();
 			
-			System.out.println("Data Qury: "+sql);
+			
 			
 			json.put("data", rs.getString("data"));
 			
-			System.out.println("second");
+			
 			
 			int typeInt = Integer.parseInt(file.substring(file.length()-1,file.length()));
 			
@@ -546,7 +489,7 @@ public class Authentication
 			
 			
 			sql = "select Username FROM [CollabEditDB].[dbo].[ExistingUsers] where UserId='"+fromUser+"'";
-			System.out.println("query2: "+sql);
+			
 			//stmt = con.createStatement();			
 			rs = stmt.executeQuery(sql);
 			rs.next();
@@ -556,8 +499,8 @@ public class Authentication
 	    }
 	    catch(Exception e)
 	    {
-	    	System.out.println(e);
-	    	System.out.println("Exception: "+e);
+	    	
+	    	
 	    	try {
 				json.put("data","null");
 			} catch (JSONException e1) {
@@ -565,7 +508,7 @@ public class Authentication
 				e1.printStackTrace();
 			}
 	    }
-	    System.out.println("data from the Auth is: "+(json.toString()));
+	    
 	    return json;
     }
     
@@ -614,7 +557,7 @@ public class Authentication
 			stmt.setString(1, password);
 			stmt.setString(2, userEmail);
 			int result = stmt.executeUpdate();
-			System.out.println(result);
+			
 			if(result > 0)
 				return true;
 			else 	
@@ -622,8 +565,8 @@ public class Authentication
         }
 	    catch(Exception e)
 	    {
-	    	System.out.println("Updation passwrd problem");
-	    	System.out.println(e);
+	    	
+	    	
 	    	return false;
 	    }
 	}

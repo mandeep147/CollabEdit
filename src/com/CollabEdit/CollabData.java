@@ -27,16 +27,9 @@ public class CollabData extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
-
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * Method will get the data from the database and send it back to the Ajax request
+	 * This will set the data to the CodeMirror if the file wass saved previously.
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
@@ -52,11 +45,9 @@ public class CollabData extends HttpServlet {
 			file =  session.getAttribute("CurrentFile").toString();
 			
 			mainJson = Authentication.getInstance().getCollabData(username, file);
-			System.out.println("----in CollabDATA--------------------");
-			System.out.println("username: "+username+" file: "+file+" json: "+json);
-//			mainJson.put("file", getFileType(file));
 			json = mainJson.toString();
-		}catch(Exception e)
+		}
+		catch(Exception e)
 		{
 			JSONObject obj = new JSONObject();
 			try {
@@ -66,12 +57,9 @@ public class CollabData extends HttpServlet {
 				e1.printStackTrace();
 			}
 			json = obj.toString();
-			System.out.println("Exception in CollabDData servlet: "+e);
 		}
 		finally
 		{
-
-			System.out.println("CollabData: json: "+json);
 			out.write(json);
 		    out.close();
 		}

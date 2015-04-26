@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+
+<head>
+<%
+try{
+	String user = session.getAttribute("LoggedInUserEmail").toString();
+
+}
+catch(Exception e)
+{
+	response.sendRedirect("../CollabEdit/");
+	//out.println("The answer is " );
+}
+%>
+<title>Editor</title>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	
+</head>
+<link rel="stylesheet"
+	href="../CollabEdit/CodeMirror/lib/codemirror.css">
+<link rel="stylesheet" href="../CollabEdit/CodeMirror/theme/mbo.css">
+<style type="text/css">
+body {
+	padding: 0px;
+	margin: 0px;
+}
+
+.selectedWidget {
+	border: 2px solid blue;
+}
+
+html,body {
+	height: 100%;
+	font-family: 'Segoe UI';
+	margin: 0;
+	padding: 0;
+}
+
+.cm-s-mbo {
+	font-family: 'Menlo', 'Consolas', monospace !important;
+	font-weight: bold;
+	font-size: 15px;
+	width: 80% !important;
+	height: 718px !important;
+	z-index: 1 !important;
+}
+
+#save {
+	position: fixed;
+	width: 19%;
+	top: 0px;
+	right: 0;
+	border-left: 1px solid white;
+	padding: 10px;
+}
+
+.rightButton {
+	border: 0px solid white;
+	background-color: rgb(86, 164, 246);
+	color: white;
+	cursor: pointer;
+	width: 250px;
+	padding: 5px 10px;
+	display: block;
+	margin: 4px auto;
+}
+
+#usersOnline {
+	z-index: -3;
+	position: fixed;
+	top: 115px;
+	right: 0;
+	border-left: 1px solid white;
+	width: 20%;
+	height: 100%;
+	overflow-y: scroll;
+	background-color: rgba(86, 164, 246, 0.5);
+	color: black;
+}
+
+.online {
+	vertical-align: super;
+}
+
+.greenDot {
+	margin-right: 5px;
+	width: 32px;
+	height: 32px;
+}
+
+.errorData {
+	text-align: center;
+}
+
+.goBack {
+	font-size: 20px;
+	border: 0px solid black;
+	cursor: pointer;
+	background-color: white;
+	color: rgb(86, 164, 246);
+	margin: 0 auto;
+	display: block;
+	border-radius: 3px;
+	padding: 4px;
+}
+
+#emailTo
+{
+	font-weight:100;
+	width:350px;
+	text-align:center;
+	padding: 5px 15px;
+	display:block;
+	margin: 10px auto;
+	font-size: 24px;
+}
+.noticeForOldData
+{
+	display: none;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	width: 100%;
+	position: fixed;
+	background-color: rgba(0,0,0,0.8);
+	z-index:10;
+}
+.divForBlueColor
+{
+	width: inherit;
+	background-color: #397DC4;
+}
+.noticeText
+{
+	font-size: 20px;
+	padding: 50px;
+	width: 1366px;
+	margin: 200px auto 0px auto;
+	color: white;
+}
+
+
+.noticeButtonsDiv
+{
+	margin: 0 auto;
+	width:200px;
+}
+#sendMail, #backButton
+{
+	border: 0px solid white;
+	color: rgb(86, 164, 246);
+	background-color: white;
+	font-size:18px;
+	cursor: pointer;
+	padding: 5px 10px;
+	margin: 10px;	
+	border:0px solid white;
+}
+
+#mailDiv {
+	display: none;
+	height: 200px;
+	width: 100%;
+	margin-top: 100px;
+	z-index: 1000;
+	background-color: rgba(0, 0, 0, 0.5);
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+}
+</style>
+<body style="height: 107px;">
+
+	<script src="../CollabEdit/scripts/DisplayShared.js"></script>
+	<script src="../CollabEdit/CodeMirror/lib/codemirror.js"></script>
+	 <script src="../CollabEdit/CodeMirror/mode/javascript/javascript.js"></script> 
+	<script src="../CollabEdit/dojo/dojo.js" data-dojo-config="async:true"></script>
+	<form>
+		<textarea id='myTextArea'>
+	        	//Enter your code here
+	    	</textarea>
+
+		<div id='right'>
+			<div id='save'>
+				<input type="button" class='rightButton' id='saveButton'
+					onClick="saveChanges()" value="Save Changes"> <input
+					type='button' class='rightButton' value='Logout' id='logoutButton'>
+				<input type='button' class='rightButton' id='mailButton'
+					value='Mail'>
+			</div>
+			<div id='usersOnline'></div>
+		</div>
+	</form>
+
+	<div class="noticeForOldData">
+		<div class="divForBlueColor">
+			<div class="noticeText"></div>
+		</div>
+	</div>
+	
+		<script> 
+		var cm = CodeMirror.fromTextArea(myTextArea, {
+			lineNumbers : true,
+			theme : "mbo",
+			autoCloseBrackets : true,
+			keymap : 'sublime',
+			foldGutter : true,
+			gutters : [ "CodeMirror-linenumbers", "CodeMirror-foldgutter" ],
+			matchBrackets : true
+		});
+	</script>
+	<script src="../CollabEdit/scripts/main.js"></script>
+
+</body>
+
+</html>
+
