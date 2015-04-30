@@ -98,6 +98,7 @@ public class MailClass {
         String subject = "CollabEdit Password Recovery";
         String message = "Your pass-code for CollabEdit account is: "+randomString;
         
+        System.out.println("1");
         // sets SMTP server properties
         Properties properties = new Properties();
         properties.put("mail.smtp.host", host);
@@ -106,14 +107,14 @@ public class MailClass {
         properties.put("mail.smtp.starttls.enable", "true");
         properties.put("mail.user", userName);
         properties.put("mail.password", password);
- 
+        System.out.println("@");
         // creates a new session with an authenticator
         Authenticator auth = new Authenticator() {
             public PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(userName, password);
             }
         };
-
+        System.out.println("3");
         Session session = Session.getInstance(properties, auth);
  
         // creates a new e-mail message
@@ -121,13 +122,13 @@ public class MailClass {
  
         try
         {
-        	
+            System.out.println("4");
 			msg.setFrom(new InternetAddress(userName));
 	        InternetAddress[] toAddresses = { new InternetAddress(toAddress) };
 	        msg.setRecipients(Message.RecipientType.TO, toAddresses);
 	        msg.setSubject(subject);
 	        msg.setSentDate(new Date());
-	 
+	        System.out.println("5");
 	        // creates message part
 	        MimeBodyPart messageBodyPart = new MimeBodyPart();
 	        messageBodyPart.setContent(message, "text/html");
@@ -135,11 +136,13 @@ public class MailClass {
 	        // creates multi-part
 	        Multipart multipart = new MimeMultipart();
 	        multipart.addBodyPart(messageBodyPart);
-	 
+	        System.out.println("6");
 	        msg.setContent(multipart);
-	 
+	        
+	        System.out.println("7");
 	        // sends the e-mail
 	        Transport.send(msg);
+	        
 	        System.out.println("MAil Sent..!!");
 		} 
         catch (Exception e) 

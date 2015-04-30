@@ -36,16 +36,12 @@ public class OTServerr {
     @OnOpen
     public void onOpen(Session session){
     	System.out.println(session.getId() + " has opened a connection");    
-        try {
-            Message connectedMessage = new Message(Json.createObjectBuilder()
-            .add("type", "text")
-            .add("data", "User has connected")
-            .build());
-            sessions.add(session);
-            session.getBasicRemote().sendObject(connectedMessage);
-        } catch (IOException | EncodeException ex) {
-            ex.printStackTrace();
-        }
+        Message connectedMessage = new Message(Json.createObjectBuilder()
+		.add("type", "text")
+		.add("data", "User has connected")
+		.build());
+		sessions.add(session);
+//            session.getBasicRemote().sendObject(connectedMessage);
     }
  
     /**
@@ -59,9 +55,11 @@ public class OTServerr {
    
     	int val=-1;JsonObject tempJson = null;
 
+    	System.out.println("got this from client: "+message.getJson().toString());
     	// if Message Json consist of "total", means it has to be sent to other user
     	if(containsValue(message, "total",false))
     	{
+			System.out.println("83");
     		val = message.getJson().getInt("total");
     	}
     	//If it consists of "codeFromEditor" that means it has to be saved to DB
@@ -75,8 +73,10 @@ public class OTServerr {
     	}
     	else
     	{
+			System.out.println("84");
         	if(val!=-1)
         	{
+    			System.out.println("85");
         		if(containsValue(message, "response",true))
         		{
         			/*
@@ -86,19 +86,25 @@ public class OTServerr {
         		}
         		else
         		{
+        			System.out.println("86");
         			String userFile = sessionFile.get(userSession.get(message.getJson().getString("from")));
+        			System.out.println("90");
         			int total = message.getJson().getInt("total");
+        			System.out.println("91");
         			while(total>0)
         			{
+        				System.out.println("92");
         				String email = message.getJson().getString("email"+total);
-
+        				System.out.println("93");
         				Session ses = userSession.get(email); //getting the session of that person TO WHOM we want to send the message
-
+        				System.out.println("94");
         				String tempFile = sessionFile.get(ses); //file        				
-        				
+        				System.out.println("95");
         				if(tempFile.equals(userFile))
         				{
+        					System.out.println("96");
         					sendMessageToAll(message,ses);
+        					System.out.println("Message Sent");
         				}
         				total--;
         			}
@@ -106,7 +112,7 @@ public class OTServerr {
         	}
         	else
         	{
-        		
+    			System.out.println("87");
         		String fromMailID = message.getJson().getString("from");
         		String file = message.getJson().getString("file");
         		
@@ -161,6 +167,7 @@ public class OTServerr {
     private void sendMessageToAll(Message message,Session session){
             try {
                 session.getBasicRemote().sendObject(message);
+                System.out.println("json: "+message.getJson().toString());
                 System.out.println("MESSAGE SENT");
             } catch (IOException | EncodeException ex) {
             	System.out.println("Message not sent");

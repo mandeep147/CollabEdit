@@ -1,15 +1,41 @@
 body
 {
-	background: url('/CollabEdit/images/bg.jpg');
+	background: url('../images/mainBG.jpg');
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
 	font-family: "roboto";
+}
+
+input[type="button"], input[type="submit"], button
+{
+	-webkit-transition: background-color 0.4s ease;
+    -moz-transition: background-color 0.4s ease;
+    -o-transition: background-color 0.4s ease;
+    transition: background-color 0.4s ease;
+	cursor: pointer;
+	border: 0px solid white;
+	border-radius: 5px;
+	background-color: rgb(222,39,40);
+	color: white;
+	border: 1px solid rgb(222,39,40);
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 10px;
+}
+input[type="button"]:hover, input[type="submit"]:hover, button:hover
+{
+	background-color: white;
+	color: rgb(222,39,40);
+	border-radius: 5px;
 }
 .main
 {
 	width: 400px;
 	margin: 100px auto 0px auto;
-	background-color: rgba(240,240,240,0.9);
+	background-color: rgba(255,255,255,0.4);
 	padding: 10px 25px;
-	box-shadow: 0px 0px 20px rgba(86,164,246,0.5);
+	box-shadow: 20px 20px 50px rgba(0,0,0,0.5);
 	border: 1px solid rgba(60,60,60,0.2);
 }
 
@@ -41,7 +67,7 @@ hr
 }
 .inputs, #gmail
 {
-	background-color: rgba(86,164,246,0.2);
+	background-color: rgba(255,255,255,0.5);
 	border: 0px solid white;
 	font-size: 20px;
 	padding:10px 0px 10px 50px;
@@ -55,15 +81,15 @@ hr
 }
 .username
 {
-	background-image: url("/CollabEdit/images/username.png");
+	background-image: url("../images/username.png");
 }
 .password, .confPassword
 {
-	background-image: url("/CollabEdit/images/password.png");
+	background-image: url("../images/password.png");
 }
 .email
 {
-	background-image: url("/CollabEdit/images/email.png");	
+	background-image: url("../images/email.png");	
 }
 .login, .signup
 {
@@ -106,9 +132,11 @@ hr
 	color: rgb(86,164,246);
 	background-color: white;
 	font-weight:600;
-	padding: 5px;
 	border: 0px solid white;
-	float: right;
+	position: relative;
+	left: 200px;
+	padding: 3px;
+	font-size: 12px;
 	cursor: pointer;
 	border-radius: 5px;
 }
@@ -131,7 +159,7 @@ hr
 .divForBlueColor
 {
 	width: inherit;
-	background-color: #397DC4;
+	background-color: rgba(86,164,246,0.4);
 }
 .noticeText
 {
@@ -157,12 +185,6 @@ hr
 	font-weight: 400;
 	font-size: 20px;
 	margin-top: 15px;
-	padding: 10px;
-	color: white;
-	background-color: rgb(86,164,246);
-	cursor: pointer;
-	border: 0px solid white;
-	border-radius: 5px;
 }
 #confirm
 {
@@ -181,3 +203,4 @@ hr
 {
 	display: none;
 }
+

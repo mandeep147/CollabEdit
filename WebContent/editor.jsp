@@ -4,20 +4,19 @@
 
 <head>
 <%
-try{
-	String user = session.getAttribute("LoggedInUserEmail").toString();
+	try {
+		String user = session.getAttribute("LoggedInUserEmail")
+				.toString();
 
-}
-catch(Exception e)
-{
-	response.sendRedirect("../CollabEdit/");
-	//out.println("The answer is " );
-}
+	} catch (Exception e) {
+		response.sendRedirect("../CollabEdit/");
+		//out.println("The answer is " );
+	}
 %>
 <title>Editor</title>
 <script
 	src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-	
+
 </head>
 <link rel="stylesheet"
 	href="../CollabEdit/CodeMirror/lib/codemirror.css">
@@ -68,10 +67,18 @@ html,body {
 	margin: 4px auto;
 }
 
+#userData {
+	text-align:center;
+	margin-left: 5px;
+	color: rgb(222, 39, 40);
+	overflow:hidden;
+	font-size:12px;
+}
+
 #usersOnline {
 	z-index: -3;
 	position: fixed;
-	top: 115px;
+	top: 130px;
 	right: 0;
 	border-left: 1px solid white;
 	width: 20%;
@@ -107,18 +114,17 @@ html,body {
 	padding: 4px;
 }
 
-#emailTo
-{
-	font-weight:100;
-	width:350px;
-	text-align:center;
+#emailTo {
+	font-weight: 100;
+	width: 350px;
+	text-align: center;
 	padding: 5px 15px;
-	display:block;
+	display: block;
 	margin: 10px auto;
 	font-size: 24px;
 }
-.noticeForOldData
-{
+
+.noticeForOldData {
 	display: none;
 	top: 0;
 	bottom: 0;
@@ -126,16 +132,16 @@ html,body {
 	left: 0;
 	width: 100%;
 	position: fixed;
-	background-color: rgba(0,0,0,0.8);
-	z-index:10;
+	background-color: rgba(0, 0, 0, 0.8);
+	z-index: 10;
 }
-.divForBlueColor
-{
+
+.divForBlueColor {
 	width: inherit;
 	background-color: #397DC4;
 }
-.noticeText
-{
+
+.noticeText {
 	font-size: 20px;
 	padding: 50px;
 	width: 1366px;
@@ -143,22 +149,21 @@ html,body {
 	color: white;
 }
 
-
-.noticeButtonsDiv
+.noticeButtonsDiv 
 {
 	margin: 0 auto;
-	width:200px;
+	width: 200px;
 }
-#sendMail, #backButton
-{
+
+#sendMail,#backButton {
 	border: 0px solid white;
 	color: rgb(86, 164, 246);
 	background-color: white;
-	font-size:18px;
+	font-size: 18px;
 	cursor: pointer;
 	padding: 5px 10px;
-	margin: 10px;	
-	border:0px solid white;
+	margin: 10px;
+	border: 0px solid white;
 }
 
 #mailDiv {
@@ -178,7 +183,7 @@ html,body {
 
 	<script src="../CollabEdit/scripts/DisplayShared.js"></script>
 	<script src="../CollabEdit/CodeMirror/lib/codemirror.js"></script>
-	 <script src="../CollabEdit/CodeMirror/mode/javascript/javascript.js"></script> 
+	<script src="../CollabEdit/CodeMirror/mode/javascript/javascript.js"></script>
 	<script src="../CollabEdit/dojo/dojo.js" data-dojo-config="async:true"></script>
 	<form>
 		<textarea id='myTextArea'>
@@ -189,9 +194,10 @@ html,body {
 			<div id='save'>
 				<input type="button" class='rightButton' id='saveButton'
 					onClick="saveChanges()" value="Save Changes"> <input
-					type='button' class='rightButton' value='Logout' id='logoutButton'>
-				<input type='button' class='rightButton' id='mailButton'
-					value='Mail'>
+					type='button' class='rightButton' id='mailButton' value='Mail'>
+				<input type='button' class='rightButton' value='Logout'
+					id='logoutButton'>
+				<div id='userData'></div>
 			</div>
 			<div id='usersOnline'></div>
 		</div>
@@ -202,8 +208,8 @@ html,body {
 			<div class="noticeText"></div>
 		</div>
 	</div>
-	
-		<script> 
+
+	<script>
 		var cm = CodeMirror.fromTextArea(myTextArea, {
 			lineNumbers : true,
 			theme : "mbo",

@@ -2,6 +2,38 @@
 
 /* rgb(61, 157, 179)*/
 
+
+body
+{
+	font-family: "roboto";	
+	background-image: url('../images/mainBG.jpg');
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+}
+
+input[type="button"], input[type="submit"], button
+{
+	-webkit-transition: background-color 0.4s ease;
+    -moz-transition: background-color 0.4s ease;
+    -o-transition: background-color 0.4s ease;
+    transition: background-color 0.4s ease;
+	cursor: pointer;
+	border: 0px solid white;
+	border-radius: 5px;
+	background-color: rgb(222,39,40);
+	color: white;
+	border: 1px solid rgb(222,39,40);
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 10px;
+}
+input[type="button"]:hover, input[type="submit"]:hover, button:hover
+{
+	background-color: white;
+	color: rgb(222,39,40);
+	border-radius: 5px;
+}
 .errorData
 {
 	text-align: center;
@@ -19,23 +51,12 @@
 	padding: 4px;
 }
 
-body
-{
-	font-family: "roboto";
-	background-image: url('../images/bg.jpg');
-	background-repeat: repeat;
-}
 #createFileOuterDiv, #oldFiles
 {
 	display: none;
 }
 #loadCreateFile, #editOldFiles
 {
-	cursor: pointer;
-	background-color: rgb(61, 157, 179);
-	border: 0px solid white;
-	color: white;
-	border-radius: 5px;
 	width: 300px;
 	font-size: 36px;
 	padding-left: 36px;
@@ -64,10 +85,10 @@ body
 {
 	margin: 0 auto;
 	padding: 25px;
-	background-color: rgb(247,247,247);
+	background-color: rgba(247,247,247,0.5);
 	width: 800px;
 	border: 1px solid gray;
-	box-shadow: 0px 0px 10px rgb(50,50,50);
+	box-shadow: 20px 20px 50px black;
 }
 .file_extension
 {
@@ -80,10 +101,11 @@ body
 	font-weight: 900;
 	font-family: inherit;
 	margin-bottom: 60px;
+	border: 0px solid white;
 }
 #file,#mail_mod,#add_new,select,option
 {
-	border: 1px solid rgb(200,200,200);
+	border: 0px solid white;
 	width: 500px;
 	padding: 10px;
 	font-size: 24px;
@@ -93,10 +115,8 @@ body
 }
 #add_new
 {
-	color: white;
 	width: 300px;
 	margin-top: 40px;
-	background-color:rgb(61,157,179); 
 }
 #file
 {
@@ -123,7 +143,7 @@ a
 	margin-bottom:20px;
 	font-family: inherit;
 	font-size: 24px;
-	font-weight: 200;
+	font-weight: 400;
 	display: block;
 	background-color: black;
 	padding: 10px;

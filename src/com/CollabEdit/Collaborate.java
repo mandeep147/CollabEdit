@@ -47,6 +47,7 @@ public class Collaborate extends HttpServlet {
 		JSONObject json = new JSONObject();
 		try
 		{
+			System.out.println("Checking for: "+creatorEmail);
 			if(DatabaseClass.getInstance().CreateFile(creatorEmail,completefileName,emailid))
 			{
 				session.setAttribute("CurrentFile", completefileName); //setting the attribute

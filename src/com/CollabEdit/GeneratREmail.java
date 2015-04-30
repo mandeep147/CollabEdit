@@ -42,9 +42,10 @@ public class GeneratREmail extends HttpServlet {
 		
 		JSONObject json = new JSONObject();
 		HttpSession session = request.getSession(true);
-		
+		System.out.println("sending mail");
 		if(MailClass.sendEmail(mailId, randomPassword))
 		{
+			System.out.println("done");
 			session.setAttribute("passCode", randomPassword);
 			try
 			{

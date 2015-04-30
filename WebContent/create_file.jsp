@@ -1,17 +1,17 @@
 <html>
 <head>
 
-<%
-try{
-	String user = session.getAttribute("LoggedInUserEmail").toString();
+	<%
+	try{
+		String user = session.getAttribute("LoggedInUserEmail").toString();
 
-}
-catch(Exception e)
-{
-	response.sendRedirect("../CollabEdit/");
-	//out.println("The answer is " );
-}
-%>
+	}
+	catch(Exception e)
+	{
+		response.sendRedirect("../CollabEdit/");
+		//out.println("The answer is " );
+	}
+	%>
 	<link rel="stylesheet" type="text/css" href="css/create_file.css">
 </head>
 <body>
@@ -19,8 +19,8 @@ catch(Exception e)
 	<div id="rest">
 		<div  id="form">
 			<form autocomplete="on" method = "post">
-			<input type='button'	 id="loadCreateFile" value="Create New File">
-			<input type="button" id="editOldFiles" value='Edit Old Files'>
+				<input type='button'	 id="loadCreateFile" value="Create New File">
+				<input type="button" id="editOldFiles" value='Edit Old Files'>
 
 
 				<div id="oldFiles">
@@ -32,8 +32,8 @@ catch(Exception e)
 
 				<div id='createFileOuterDiv'>
 					<div id="create_file">Please add details for new File</div>
-<!-- 					<input type="text" id='file' class="inputs file" name="nameoffile" placeholder="Name of File"> -->
- 					<input id="file" name="nameoffile"  type="text" placeholder="Name of File" > 
+					<!-- 					<input type="text" id='file' class="inputs file" name="nameoffile" placeholder="Name of File"> -->
+					<input id="file" name="nameoffile"  type="text" placeholder="Name of File" > 
 					<br>
 					<select name='select1' id='sel1'>
 						<option selected value='NULL'>select the extension type</option>
@@ -43,7 +43,7 @@ catch(Exception e)
 						<option value='4'>.js</option>
 						<option value='5'>.html</option>
 						<option value='6'>.jsp</option>
-	
+						
 						<option value='7'>.css</option>
 						<option value='8'>.rb</option>
 						<option value='9'>.vb</option>
@@ -53,89 +53,108 @@ catch(Exception e)
 					</select>
 					<p>
 						<select name='mailofmod' id='mail_mod'> 
-						<option selected value='NULL'>Collaborate With</option>
+							<option selected value='NULL'>Collaborate With</option>
 						</select>
-<!-- 						<input id="mail_mod" name="mailofmod" type="email" required placeholder="Share With (gmail ID only)" /> -->
+						<!-- 						<input id="mail_mod" name="mailofmod" type="email" required placeholder="Share With (gmail ID only)" /> -->
 						<input id="add_new" type="button" value="Create File" onClick = "clickFunction()">
 					</p>
 				</form>
 			</div>
-	</div>
-	
-	<div class="noticeForOldData">
-		<div class="divForBlueColor">
-			<div class="noticeText">
+		</div>
+		
+		<div class="noticeForOldData">
+			<div class="divForBlueColor">
+				<div class="noticeText">
 
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 	
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script>
 
 //This ajax will get all the userMail IDs which have been registered with CollabEdit
-	$.ajax({
-		method: 'POST',
-		url : '/CollabEdit/UsersDb',
-		async: false
-	}).done(function(data,status){
-		var i =1;
-		for(index in data)
-		{
-			$('#mail_mod').append("<option name='"+i+"'>"+data[index]+"</option>");
-			i++;
-		}
-	});
+$.ajax({
+	method: 'POST',
+	url : '/CollabEdit/UsersDb',
+	async: false
+}).done(function(data,status){
+	var i =1;
+	for(index in data)
+	{
+		$('#mail_mod').append("<option name='"+i+"'>"+data[index]+"</option>");
+		i++;
+	}
+});
 
 //making OldFiles Div Visible
-	$('#loadCreateFile').click(function(event) 
-	{
-		if($('#oldFiles').is(":visible"))
-			$('#oldFiles').slideToggle(100);		
-		$('#createFileOuterDiv').slideDown(500);
-	});
+$('#loadCreateFile').click(function(event) 
+{
+	if($('#oldFiles').is(":visible"))
+		$('#oldFiles').slideToggle(100);		
+	$('#createFileOuterDiv').slideDown(500);
+});
 
-	$('#editOldFiles').click(function(event) 
-	{
-		if($('#createFileOuterDiv').is(":visible"))
-			$('#createFileOuterDiv').slideToggle(100);
-		setTimeout(function()
-		{	
-			$('#oldFiles').slideDown(500);
-		},200);
-	});
+$('#editOldFiles').click(function(event) 
+{
+	if($('#createFileOuterDiv').is(":visible"))
+		$('#createFileOuterDiv').slideToggle(100);
+	setTimeout(function()
+	{	
+		$('#oldFiles').slideDown(500);
+	},200);
+});
 
 
 //Getting the names of the old files, which are either created or shared with the logged In user
-	$.ajax({
-		url: '/CollabEdit/getPrevData',
-		type: 'POST',
-	})
-	.done(function(data,status) {
+$.ajax({
+	url: '/CollabEdit/getPrevData',
+	type: 'POST',
+})
+.done(function(data,status) {
+	
+	var fileNames=[],index=0;
+	for(var i in data)
+	{
 		
-		var fileNames=[],index=0;
-		for(var i in data)
+		fileNames[index++]= data[i].substring(0,data[i].length-36);
+		console.log("Data:    ",fileNames[index-1]);
+		var typeInt = fileNames[index-1].charAt(fileNames[index-1].length-1);
+		console.log("typeInt: "+typeInt+"  typeof: "+(typeof typeInt));
+		var type;
+		switch(typeInt)
 		{
-			
-			fileNames[index++]= data[i].substring(0,data[i].length-36);
-			console.log("Data:    ",fileNames[index-1]);
-			$('#oldFilesList').append("<li onclick=executeFunction('"+fileNames[index-1]+"') class='filename' id = '"+fileNames[index-1]+"'> <a href='editor.jsp'>" +fileNames[index-1].slice(0,fileNames[index-1].length-1)+" </a></li><br>");
+			case '1': type = ".c";break;
+			case '2': type =".cpp";break;
+			case '3':type = ".java";break;
+			case '4':type =".js";break;
+			case '5':type =".html";break;
+			case '6':type =".jsp";break;
+			case '7':type =".css";break;
+			case '8':type =".rb";break;
+			case '9':type =".vb";break;
+			case '10':type =".asp";break;
+			case '11':type =".pl";break;
+			case '12':type =".php";break;
 		}
-	});
+
+		$('#oldFilesList').append("<li onclick=executeFunction('"+fileNames[index-1]+"') class='filename' id = '"+fileNames[index-1]+"'> <a href='editor.jsp'>" +fileNames[index-1].slice(0,fileNames[index-1].length-1)+type+" </a></li><br>");
+	}
+});
 
 //This is the click function on the Old Files
-	function executeFunction(i){
-		$.ajax({
-			url: '/CollabEdit/SetCurrFile',
-			type: 'POST',
-			data: {fileName: i}
-		})
-		.done(function(data,status) {
-			console.log("Session FILENAME set");
-		});
+function executeFunction(i){
+	$.ajax({
+		url: '/CollabEdit/SetCurrFile',
+		type: 'POST',
+		data: {fileName: i}
+	})
+	.done(function(data,status) {
+		console.log("Session FILENAME set");
+	});
 
-	}
+}
 
 	//When createFile Button is clicked
 	function clickFunction()
@@ -150,7 +169,7 @@ catch(Exception e)
 			{
 				$('.noticeForOldData').slideToggle(500);
 			});
-		
+			
 		}
 		else
 		{
@@ -174,18 +193,18 @@ catch(Exception e)
 			}
 			
 			else {
-			
+				
 				//After validation, ajax request is sent to the server
-			$.ajax({
-						method : "POST",
-						url : "/CollabEdit/Collaborate",
-						data : {
-							nameoffile 	: document.getElementById('file').value,
-							select1 	: document.getElementById("sel1").value,
-					  		mailofmod 	: document.getElementById('mail_mod').value
-						},
-						error : function(data)
-						{
+				$.ajax({
+					method : "POST",
+					url : "/CollabEdit/Collaborate",
+					data : {
+						nameoffile 	: document.getElementById('file').value,
+						select1 	: document.getElementById("sel1").value,
+						mailofmod 	: document.getElementById('mail_mod').value
+					},
+					error : function(data)
+					{
 							//When data is not sent to  the server
 							
 							$('.noticeText').html("");
@@ -198,14 +217,14 @@ catch(Exception e)
 							});
 						}
 					}).done(function(data, status) 
+					{
+						if (data['response'] == 'success') 
+						{	
+							window.location.assign("editor.jsp");
+						} 
+						else 
 						{
-							if (data['response'] == 'success') 
-							{	
-								window.location.assign("editor.jsp");
-							} 
-							else 
-							{
-								
+							
 								//File with the same exists 							
 								$('.noticeText').html("");
 								$('.noticeText').append("<div class='errorData'>File with the same name, already Exists</div>");
@@ -216,10 +235,10 @@ catch(Exception e)
 									$('.noticeForOldData').slideToggle(500);
 								});			
 							}
-				});
+						});
+				}
 			}
-	}
-	}
-</script>
+		}
+	</script>
 </body>
 </html>
