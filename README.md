@@ -26,7 +26,7 @@ Database 		:	MS-SQL 2012 <br>
 5. WebSockets<br>
 
 <b><i> How to run this project </i></b><br>
-1. Clone CodeMirror and Dojo from github and add those projects into the <b>WebContent </b>folder.
+1. Clone CodeMirror and Dojo from github and add those projects into the <b>WebContent </b>folder.<br>
 2. Create a Database named as CollabEditDb in MS SQL 2012.
 
 
