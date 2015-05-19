@@ -10,3 +10,23 @@ Collaborative writing is writing done by more than one person; they may discuss 
 •	Easy to use, interface with menus. <br>
 •	Easy to code in a collaborative environment.<br>
 •	Allows authorized users to mail the document at any point of time.<br>
+<br>
+<b><i> REQUIREMENTS </i></b><br>
+<b>Minimum Software Requirements at client side</b> <br>
+Browser	           :  which supports web sockets ex. Mozilla Firefox, Google Chrome <br><br>
+<b> Minimum Software Requirements at server side</b><br>
+Coding Language	:	Java 1.7.0 or higher, Glassfish server 4.0 <br>
+Database 		:	MS-SQL 2012 <br>
+
+<b><i> Languages and Technologies Used </i></b><br>
+1. Servlets and JSP<br>
+2. HTML and CSS<br>
+3. Dojo<br>
+4. CodeMirror<br>
+5. WebSockets<br>
+
+<b><i> How to run this project </i></b><br>
+1. Clone CodeMirror and Dojo from github and add those projects into the <b>WebContent </b>folder.
+2. Create a Database named as CollabEditDb in MS SQL 2012.
+
+
